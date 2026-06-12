@@ -32,19 +32,41 @@ const FD_URL   = `https://api.football-data.org/v4/competitions/${FD_COMP}/match
 
 /* Map provider team names -> dashboard names (must match GROUPS/ELO keys). */
 const NAME_MAP = {
-  "Korea Republic": "South Korea", "South Korea": "South Korea",
+  "Korea Republic": "South Korea", "South Korea": "South Korea", "Korea, South": "South Korea", "Korea, Republic of": "South Korea", "Republic of Korea": "South Korea",
   "Türkiye": "Turkiye", "Turkey": "Turkiye", "Turkiye": "Turkiye",
   "Côte d'Ivoire": "Ivory Coast", "Cote d'Ivoire": "Ivory Coast", "Ivory Coast": "Ivory Coast",
   "IR Iran": "Iran", "Iran": "Iran",
-  "Bosnia and Herzegovina": "Bosnia & H.", "Bosnia & H.": "Bosnia & H.",
+  "Bosnia and Herzegovina": "Bosnia & H.", "Bosnia & H.": "Bosnia & H.", "Bosnia-Herzegovina": "Bosnia & H.",
   "Czech Republic": "Czechia", "Czechia": "Czechia",
-  "DR Congo": "DR Congo", "Congo DR": "DR Congo",
-  "Cape Verde": "Cape Verde", "Cabo Verde": "Cape Verde",
-  "United States": "USA", "USA": "USA", "United States of America": "USA",
+  "DR Congo": "DR Congo", "Congo DR": "DR Congo", "Democratic Republic of Congo": "DR Congo",
+  "Cape Verde": "Cape Verde", "Cabo Verde": "Cape Verde", "Cape Verde Islands": "Cape Verde",
+  "United States": "USA", "USA": "USA", "United States of America": "USA", "United States MNT": "USA",
   "Curaçao": "Curacao", "Curacao": "Curacao",
   // identity entries (everyone else passes straight through if already correct)
 };
-const norm = (n) => NAME_MAP[n] || n;
+
+/* The 48 dashboard team names. KEEP IN SYNC with GROUPS in index.html.
+   Any resolved name not in this set means a provider spelling slipped
+   through unmapped — the run will warn loudly and skip that match
+   rather than writing a row the dashboard can't match. */
+const KNOWN_TEAMS = new Set([
+  "Mexico","South Africa","South Korea","Czechia","Canada","Bosnia & H.","Qatar","Switzerland",
+  "Brazil","Morocco","Haiti","Scotland","USA","Paraguay","Australia","Turkiye","Germany","Curacao",
+  "Ivory Coast","Ecuador","Netherlands","Japan","Sweden","Tunisia","Iran","New Zealand","Belgium","Egypt",
+  "Spain","Cape Verde","Saudi Arabia","Uruguay","France","Senegal","Iraq","Norway","Argentina","Algeria",
+  "Austria","Jordan","Portugal","DR Congo","Uzbekistan","Colombia","England","Croatia","Ghana","Panama"
+]);
+
+/* fold accents + collapse whitespace so "Türkiye"/"Curaçao" resolve even if unmapped */
+const fold = (s) => (s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, " ").trim();
+function norm(n) {
+  if (NAME_MAP[n]) return NAME_MAP[n];
+  const f = fold(n);
+  if (NAME_MAP[f]) return NAME_MAP[f];
+  if (KNOWN_TEAMS.has(n)) return n;
+  if (KNOWN_TEAMS.has(f)) return f;
+  return n; // unresolved — flagged later by validation
+}
 const groupLetter = (g) => (g ? String(g).replace(/GROUP[_ ]?/i, "").trim().toUpperCase() : null);
 
 async function fetchMatches() {
@@ -66,13 +88,22 @@ async function fetchMatches() {
 }
 
 function toResults(raw) {
-  return raw.map((m) => ({
-    g: m.groupLetter,
-    h: norm(m.homeName),
-    a: norm(m.awayName),
-    hs: m.homeScore,
-    as: m.awayScore,
-  }));
+  const out = [];
+  const unresolved = [];
+  for (const m of raw) {
+    const h = norm(m.homeName), a = norm(m.awayName);
+    const bad = [];
+    if (!KNOWN_TEAMS.has(h)) bad.push(`home "${m.homeName}" → "${h}"`);
+    if (!KNOWN_TEAMS.has(a)) bad.push(`away "${m.awayName}" → "${a}"`);
+    if (!/^[A-L]$/.test(m.groupLetter)) bad.push(`group "${m.groupLetter}"`);
+    if (bad.length) { unresolved.push(bad.join(", ")); continue; }
+    out.push({ g: m.groupLetter, h, a, hs: m.homeScore, as: m.awayScore });
+  }
+  if (unresolved.length) {
+    console.warn("⚠️  UNRESOLVED — these finished matches were SKIPPED (add to NAME_MAP):");
+    unresolved.forEach((u) => console.warn("   • " + u));
+  }
+  return out;
 }
 
 async function main() {
@@ -102,4 +133,9 @@ async function main() {
   console.log(`Wrote ${results.length} finished matches to results.json (${today}).`);
 }
 
-main();
+// Run only when invoked directly (so the module can be imported in tests).
+if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
+  main();
+}
+
+export { norm, fold, NAME_MAP, KNOWN_TEAMS, toResults, groupLetter };
