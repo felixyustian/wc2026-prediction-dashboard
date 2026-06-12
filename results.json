@@ -1,0 +1,8 @@
+{
+  "updated": "2026-06-12",
+  "source": "seed (manual) — replaced by automated daily job",
+  "results": [
+    { "g": "A", "h": "Mexico",      "a": "South Africa", "hs": 2, "as": 0 },
+    { "g": "A", "h": "South Korea", "a": "Czechia",      "hs": 2, "as": 1 }
+  ]
+}
