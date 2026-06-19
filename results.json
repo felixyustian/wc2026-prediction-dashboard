@@ -1,8 +1,34 @@
 {
-  "updated": "2026-06-12",
-  "source": "seed (manual) — replaced by automated daily job",
+  "updated": "2026-06-19",
+  "source": "manual — results through Jun 18",
   "results": [
-    { "g": "A", "h": "Mexico",      "a": "South Africa", "hs": 2, "as": 0 },
-    { "g": "A", "h": "South Korea", "a": "Czechia",      "hs": 2, "as": 1 }
+    { "g": "A", "h": "Mexico",       "a": "South Africa",  "hs": 2, "as": 0 },
+    { "g": "A", "h": "South Korea",  "a": "Czechia",       "hs": 2, "as": 1 },
+    { "g": "A", "h": "Czechia",      "a": "South Africa",  "hs": 1, "as": 1 },
+    { "g": "A", "h": "Mexico",       "a": "South Korea",   "hs": 1, "as": 0 },
+    { "g": "B", "h": "Canada",       "a": "Bosnia & H.",   "hs": 1, "as": 1 },
+    { "g": "B", "h": "Qatar",        "a": "Switzerland",   "hs": 1, "as": 1 },
+    { "g": "B", "h": "Switzerland",  "a": "Bosnia & H.",   "hs": 4, "as": 1 },
+    { "g": "B", "h": "Canada",       "a": "Qatar",         "hs": 6, "as": 0 },
+    { "g": "C", "h": "Brazil",       "a": "Morocco",       "hs": 1, "as": 1 },
+    { "g": "C", "h": "Haiti",        "a": "Scotland",      "hs": 0, "as": 1 },
+    { "g": "D", "h": "USA",          "a": "Paraguay",      "hs": 4, "as": 1 },
+    { "g": "D", "h": "Australia",    "a": "Turkiye",       "hs": 2, "as": 0 },
+    { "g": "E", "h": "Germany",      "a": "Curacao",       "hs": 7, "as": 1 },
+    { "g": "E", "h": "Ivory Coast",  "a": "Ecuador",       "hs": 1, "as": 0 },
+    { "g": "F", "h": "Netherlands",  "a": "Japan",         "hs": 2, "as": 2 },
+    { "g": "F", "h": "Sweden",       "a": "Tunisia",       "hs": 5, "as": 1 },
+    { "g": "G", "h": "Belgium",      "a": "Egypt",         "hs": 1, "as": 1 },
+    { "g": "G", "h": "Iran",         "a": "New Zealand",   "hs": 2, "as": 2 },
+    { "g": "H", "h": "Spain",        "a": "Cape Verde",    "hs": 0, "as": 0 },
+    { "g": "H", "h": "Saudi Arabia", "a": "Uruguay",       "hs": 1, "as": 1 },
+    { "g": "I", "h": "France",       "a": "Senegal",       "hs": 3, "as": 1 },
+    { "g": "I", "h": "Iraq",         "a": "Norway",        "hs": 1, "as": 4 },
+    { "g": "J", "h": "Argentina",    "a": "Algeria",       "hs": 3, "as": 0 },
+    { "g": "J", "h": "Austria",      "a": "Jordan",        "hs": 3, "as": 1 },
+    { "g": "K", "h": "Portugal",     "a": "DR Congo",      "hs": 1, "as": 1 },
+    { "g": "K", "h": "Uzbekistan",   "a": "Colombia",      "hs": 1, "as": 3 },
+    { "g": "L", "h": "England",      "a": "Croatia",       "hs": 4, "as": 2 },
+    { "g": "L", "h": "Ghana",        "a": "Panama",        "hs": 1, "as": 0 }
   ]
 }
