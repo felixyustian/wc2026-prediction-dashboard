@@ -90,6 +90,29 @@ select:focus{outline:1px solid var(--accent)}
 .tm.ls .nm{color:var(--muted)}
 .resultline{margin-top:11px;font-size:12.5px;color:var(--muted)}
 .resultline b{color:var(--text)}
+/* search */
+.searchwrap{position:relative;display:flex;align-items:center}
+#search{font-family:'Sofia Sans';font-size:14px;background:var(--raise);color:var(--text);border:1px solid var(--line2);border-radius:9px;padding:8px 30px 8px 32px;width:220px;transition:.15s}
+#search:focus{outline:1px solid var(--accent);width:250px}
+#search::placeholder{color:var(--dim)}
+.searchwrap .si{position:absolute;left:10px;color:var(--dim);font-size:14px;pointer-events:none}
+.searchwrap .sx{position:absolute;right:8px;color:var(--dim);cursor:pointer;font-size:16px;line-height:1;display:none;border:0;background:none}
+.searchwrap.has .sx{display:block}
+.searchwrap .sx:hover{color:var(--loss)}
+.searchcount{font-size:11px;color:var(--dim);margin:0 0 12px;letter-spacing:.04em}
+.searchcount b{color:var(--accent2)}
+/* preview */
+.match.preview{border-color:rgba(86,214,255,.28);background:linear-gradient(180deg,rgba(86,214,255,.045),transparent 60%),var(--panel)}
+.todaybadge{font-family:'Saira Condensed';font-weight:700;font-size:10px;letter-spacing:.12em;color:#0a0e17;background:var(--accent2);padding:2px 7px;border-radius:5px;margin-right:8px}
+.soonbadge{font-family:'Saira Condensed';font-weight:700;font-size:10px;letter-spacing:.12em;color:var(--accent2);background:rgba(86,214,255,.12);border:1px solid rgba(86,214,255,.3);padding:2px 7px;border-radius:5px;margin-right:8px}
+.formpill{display:inline-block;font-size:10.5px;font-family:'Saira',sans-serif;color:var(--muted);background:var(--panel2);border:1px solid var(--line);border-radius:5px;padding:1px 6px;margin-left:7px;vertical-align:middle;font-variant-numeric:tabular-nums;white-space:nowrap}
+.tm.r .formpill{margin-left:0;margin-right:7px}
+.formpill b{color:var(--text);font-weight:600}
+.formpill.none{color:var(--dim)}
+.previewfoot{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:11px;font-size:12.5px;color:var(--muted)}
+.previewfoot b{color:var(--text);font-family:'Saira Condensed';font-weight:700;font-size:15px}
+.previewfoot small{color:var(--dim)}
+tr.hl{background:rgba(201,255,74,.07)}
 .statusbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--win);border-radius:11px;padding:10px 14px;margin-bottom:16px;font-size:13px;color:var(--muted)}
 .statusbar b{color:var(--text);font-family:'Saira Condensed';font-weight:700;letter-spacing:.02em}
 .statusbar .live{width:8px;height:8px;border-radius:50%;background:var(--win);box-shadow:0 0 0 0 rgba(55,210,127,.5);animation:pulse 1.8s infinite}
@@ -145,6 +168,7 @@ tbody tr:hover{background:var(--raise)}
 
 <div class="tabs" id="tabs">
   <button class="tab active" data-v="matches">Match Predictions</button>
+  <button class="tab" data-v="preview">Match Preview</button>
   <button class="tab" data-v="groups">Group Odds</button>
   <button class="tab" data-v="tourn">Tournament Odds</button>
   <button class="tab" data-v="about">Model</button>
@@ -164,6 +188,15 @@ tbody tr:hover{background:var(--raise)}
       </select>
     </label>
   </div>
+  <div class="grp">
+    <label class="fld">Find
+      <div class="searchwrap" id="searchwrap">
+        <span class="si">⌕</span>
+        <input id="search" type="text" placeholder="team, group, or city…" autocomplete="off" spellcheck="false">
+        <button class="sx" id="searchClear" title="clear">×</button>
+      </div>
+    </label>
+  </div>
   <div class="grp simbox">
     <label class="fld">Sim runs
       <select id="fSims"><option value="2000">2,000</option><option value="10000" selected>10,000</option><option value="30000">30,000</option></select>
@@ -181,6 +214,7 @@ tbody tr:hover{background:var(--raise)}
 <div id="capture">
   <div class="statusbar" id="statusbar"></div>
   <div class="view active" id="view-matches"></div>
+  <div class="view" id="view-preview"></div>
   <div class="view" id="view-groups"></div>
   <div class="view" id="view-tourn"></div>
   <div class="view" id="view-about"></div>
@@ -483,15 +517,94 @@ const $=s=>document.querySelector(s);
 const pc=x=>(x*100).toFixed(x>=.0995?0:1);
 function teamEl(name,el){return `<span class="nm">${name}</span> <span class="el">${ABBR[name]||''} · ${ELO[name]}</span>`;}
 
+/* ---- search + preview helpers ---- */
+let SEARCH="";
+const qnorm=s=>(s||"").toLowerCase().trim();
+function groupQuery(q){const g=q.replace(/^group\s+/,"");return /^[a-l]$/.test(g)?g.toUpperCase():null;}
+function matchHit(m,q){
+  if(!q) return true;
+  const gq=groupQuery(q);
+  if(gq) return m.g===gq;
+  const hay=[m.h,m.a,ABBR[m.h],ABBR[m.a],m.venue,m.city,"group "+m.g].join(" ").toLowerCase();
+  return hay.includes(q);
+}
+function teamHit(name,q){
+  if(!q) return true;
+  const gq=groupQuery(q);
+  if(gq) return (GROUPS[gq]||[]).includes(name);
+  return (name+" "+(ABBR[name]||"")).toLowerCase().includes(q);
+}
+function computeForm(){
+  const f={}; Object.keys(ELO).forEach(n=>f[n]={p:0,w:0,d:0,l:0,gf:0,ga:0,pts:0});
+  matchProbs.forEach(m=>{
+    if(!m.played) return;
+    const H=f[m.h],A=f[m.a];
+    H.p++;A.p++;H.gf+=m.hs;H.ga+=m.as;A.gf+=m.as;A.ga+=m.hs;
+    if(m.hs>m.as){H.w++;A.l++;H.pts+=3;}
+    else if(m.hs<m.as){A.w++;H.l++;A.pts+=3;}
+    else{H.d++;A.d++;H.pts++;A.pts++;}
+  });
+  return f;
+}
+function likelyScore(la,lb){
+  let best=[0,0,0];
+  for(let i=0;i<=6;i++)for(let j=0;j<=6;j++){const p=poissonPMF(i,la)*poissonPMF(j,lb);if(p>best[2])best=[i,j,p];}
+  return best;
+}
+function parseDate(s){const m=s.match(/([A-Za-z]{3})\s+(\d+)/g);const mm=s.match(/([A-Za-z]{3})\s+(\d+)$/)||s.match(/(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+(\d+)/);return mm?new Date(`${mm[1]} ${mm[2]}, 2026`):new Date(8.64e15);}
+function formPill(f){
+  if(!f||f.p===0) return '<span class="formpill none">no games yet</span>';
+  return `<span class="formpill"><b>${f.w}W ${f.d}D ${f.l}L</b> · ${f.gf}-${f.ga} · ${f.pts}pts</span>`;
+}
+
+function renderPreview(){
+  const q=SEARCH, form=computeForm();
+  const upcoming=matchProbs.filter(m=>!m.played && matchHit(m,q)).sort((a,b)=>parseDate(a.date)-parseDate(b.date));
+  let html='<div class="note" style="margin-bottom:16px;border-left-color:var(--accent2)">Pre-match model previews for upcoming fixtures, in date order — current form, predicted result, and the single most likely scoreline. When a match finishes it moves to <b>Match Predictions</b> as a FINAL. <span style="color:var(--dim)">These are model previews, not live in-play scores.</span></div>';
+  if(!upcoming.length){html+='<div class="note">No upcoming matches'+(q?' match your search':'')+'. The group stage may be complete.</div>';$("#view-preview").innerHTML=html;return;}
+  const today=new Date(RESULTS_DATE+"T00:00:00").getTime();
+  if(q) html+=`<div class="searchcount"><b>${upcoming.length}</b> upcoming match${upcoming.length>1?'es':''} matching "<b>${q}</b>"</div>`;
+  upcoming.slice(0,14).forEach(m=>{
+    const [si,sj,sp]=likelyScore(m.la,m.lb);
+    const t=parseDate(m.date).getTime();
+    const badge = t===today?'<span class="todaybadge">TODAY</span>':(t>today&&t<today+2*864e5)?'<span class="soonbadge">UP NEXT</span>':'';
+    const favN=m.w>=m.l?m.h:m.a, favP=Math.max(m.w,m.l);
+    const read = favP>0.6?`${ABBR[favN]||favN} strongly favored`:(Math.abs(m.w-m.l)<0.08?'Even match-up':`${ABBR[favN]||favN} slight edge`);
+    html+=`<div class="match preview">
+      <div class="top">
+        <span class="gtag">Group ${m.g} · MD${m.day}</span>
+        <span class="meta">${badge}${m.date} · ${m.venue}, ${m.city}</span>
+      </div>
+      <div class="teams">
+        <div class="tm">${teamEl(m.h)} ${formPill(form[m.h])}</div>
+        <span class="vs">v</span>
+        <div class="tm r">${teamEl(m.a)} ${formPill(form[m.a])}</div>
+      </div>
+      <div class="wbar"><i class="w" style="width:${m.w*100}%"></i><i class="d" style="width:${m.d*100}%"></i><i class="l" style="width:${m.l*100}%"></i></div>
+      <div class="pct">
+        <span class="p l"><span class="lbl">${ABBR[m.h]||'Home'} win</span><b class="cwin">${pc(m.w)}%</b></span>
+        <span class="p"><span class="lbl">Draw</span><b class="cdraw">${pc(m.d)}%</b></span>
+        <span class="p rt"><span class="lbl">${ABBR[m.a]||'Away'} win</span><b class="closs">${pc(m.l)}%</b></span>
+      </div>
+      <div class="previewfoot">
+        <span>Most likely score <b>${si}–${sj}</b> <small>(${pc(sp)}% of outcomes)</small></span>
+        <span>${read}</span>
+      </div>
+    </div>`;
+  });
+  $("#view-preview").innerHTML=html;
+}
+
 function renderMatches(){
   const fg=$("#fGroup").value, fd=$("#fDay").value;
-  let list=matchProbs.filter(m=>(fg==="all"||m.g===fg)&&(fd==="all"||String(m.day)===fd));
+  let list=matchProbs.filter(m=>(fg==="all"||m.g===fg)&&(fd==="all"||String(m.day)===fd)&&matchHit(m,SEARCH));
   // group by date
   const byDate={};
   list.forEach(m=>{(byDate[m.date]=byDate[m.date]||[]).push(m);});
   const dates=Object.keys(byDate);
   let html="";
-  if(!list.length){html='<div class="note">No matches for this filter.</div>';}
+  if(SEARCH) html+=`<div class="searchcount"><b>${list.length}</b> match${list.length===1?'':'es'} matching "<b>${SEARCH}</b>"</div>`;
+  if(!list.length){html+='<div class="note">No matches for this filter.</div>';}
   dates.forEach(dt=>{
     html+=`<div class="daygroup"><div class="dayhead">${dt}</div>`;
     byDate[dt].forEach(m=>{
@@ -546,7 +659,13 @@ function renderGroups(){
   const {t,N}=TALLY;
   const avg={A:1720,B:1681,C:1776,D:1810,E:1742,F:1803,G:1725,H:1794,I:1870,J:1843,K:1835,L:1798};
   let html='<div class="legend"><span><i class="dot" style="background:linear-gradient(90deg,var(--accent2),var(--accent))"></i> bar = chance to advance to knockout</span><span><b style="color:var(--accent)">Win</b> = win the group · <b>Adv</b> = reach Round of 32</span></div><div class="ggrid">';
-  Object.keys(GROUPS).forEach(g=>{
+  const gkeys=Object.keys(GROUPS).filter(g=>{
+    if(!SEARCH) return true;
+    const gq=groupQuery(SEARCH);
+    if(gq) return g===gq;
+    return GROUPS[g].some(n=>teamHit(n,SEARCH));
+  });
+  gkeys.forEach(g=>{
     const rows=GROUPS[g].map(n=>({n,gw:t[n].gw/N,adv:t[n].adv/N,elo:ELO[n]}))
                         .sort((a,b)=>b.adv-a.adv);
     html+=`<div class="gcard"><h3>Group ${g}</h3><div class="gavg">avg Elo ${avg[g]} · ${GROUPS[g].length} teams</div>`;
@@ -561,6 +680,7 @@ function renderGroups(){
     html+=`</div>`;
   });
   html+="</div>";
+  if(!gkeys.length) html='<div class="note">No groups match "<b>'+SEARCH+'</b>".</div>';
   $("#view-groups").innerHTML=html;
 }
 
@@ -575,12 +695,14 @@ function renderTourn(){
   const maxFin=Math.max(...rows.map(r=>r.fin))||1;
   const head=[["n","Team",0],["elo","Elo",1],["adv","Adv R32",1],["r16","R16",1],["qf","QF",1],["sf","SF",1],["fin","Final",1],["champ","Champion",1]];
   let html='<div class="legend"><span>Probability of reaching each stage, across '+N.toLocaleString()+' simulated tournaments. Sorted by <b style="color:var(--accent2)">chance to reach the Final</b> — click any header to re-sort.</span></div>';
+  const shown=rows.map((r,i)=>({r,rank:i+1})).filter(x=>teamHit(x.r.n,SEARCH));
+  if(SEARCH) html+=`<div class="searchcount"><b>${shown.length}</b> team${shown.length===1?'':'s'} matching "<b>${SEARCH}</b>" — rank shown is overall</div>`;
   html+='<table id="tt"><thead><tr><th class="rk">#</th>';
   head.forEach(h=>html+=`<th class="${h[2]?'num':''}" data-k="${h[0]}">${h[1]}</th>`);
   html+='</tr></thead><tbody>';
-  rows.forEach((r,i)=>{
-    html+=`<tr>
-      <td class="rk">${i+1}</td>
+  shown.forEach(({r,rank})=>{
+    html+=`<tr class="${SEARCH?'hl':''}">
+      <td class="rk">${rank}</td>
       <td><span class="tname">${r.n}</span></td>
       <td class="num" style="color:var(--muted)">${r.elo}</td>
       <td class="num">${pc(r.adv)}%</td>
@@ -592,6 +714,7 @@ function renderTourn(){
     </tr>`;
   });
   html+="</tbody></table>";
+  if(!shown.length) html='<div class="note">No teams match "<b>'+SEARCH+'</b>".</div>';
   $("#view-tourn").innerHTML=html;
   $("#tt").querySelectorAll("th[data-k]").forEach(th=>th.onclick=()=>{sortKey=th.dataset.k==="n"?"fin":th.dataset.k;renderTourn();});
 }
@@ -619,7 +742,7 @@ function renderStatus(){
     ' &nbsp;·&nbsp; odds below are '+(PLAYED_COUNT>0?'conditioned on actual results so far':'pre-tournament estimates');
 }
 
-function renderAll(){renderStatus();renderMatches();renderGroups();renderTourn();renderAbout();}
+function renderAll(){renderStatus();renderMatches();renderPreview();renderGroups();renderTourn();renderAbout();}
 
 /* ---- tabs ---- */
 document.querySelectorAll(".tab").forEach(tab=>tab.onclick=()=>{
@@ -628,9 +751,24 @@ document.querySelectorAll(".tab").forEach(tab=>tab.onclick=()=>{
   const v=tab.dataset.v;
   document.querySelectorAll(".view").forEach(x=>x.classList.remove("active"));
   $("#view-"+v).classList.add("active");
-  $("#filters").style.opacity = v==="matches"?"1":".4";
-  $("#filters").style.pointerEvents = v==="matches"?"auto":"none";
+  const useFilters = v==="matches";
+  $("#filters").style.opacity = useFilters?"1":".4";
+  $("#filters").style.pointerEvents = useFilters?"auto":"none";
 });
+
+/* ---- search ---- */
+function applySearch(){
+  renderMatches();renderPreview();
+  if(TALLY){renderGroups();renderTourn();}
+}
+$("#search").oninput=(e)=>{
+  SEARCH=qnorm(e.target.value);
+  $("#searchwrap").classList.toggle("has",!!SEARCH);
+  applySearch();
+};
+$("#searchClear").onclick=()=>{
+  $("#search").value="";SEARCH="";$("#searchwrap").classList.remove("has");applySearch();$("#search").focus();
+};
 
 /* ---- filters ---- */
 $("#fGroup").innerHTML='<option value="all">All groups</option>'+Object.keys(GROUPS).map(g=>`<option value="${g}">Group ${g}</option>`).join("");
