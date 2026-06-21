@@ -1,15 +1,12 @@
 name: Update World Cup results
 
-# Runs on a schedule during the tournament, plus manual trigger.
-# Each run fetches finished matches, rewrites results.json, and commits.
-# The commit to main triggers Vercel's git integration to redeploy.
+# Fetches finished matches from API-Football and commits results.json.
+# The commit to the production branch triggers Vercel to redeploy.
 
 on:
   schedule:
-    # Several times a day in UTC to catch matches finishing across time zones.
-    # Group stage runs Jun 11–27; trim or widen as you like.
-    - cron: "0 4,8,12,16,20 * * *"
-  workflow_dispatch: {}   # lets you run it on demand from the Actions tab
+    - cron: "0 4,8,12,16,20 * * *"   # five times daily (UTC) during the tournament
+  workflow_dispatch: {}              # manual "Run workflow" button
 
 permissions:
   contents: write
@@ -23,15 +20,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
 
       - name: Fetch latest results
         env:
-          FD_API_TOKEN: ${{ secrets.FD_API_TOKEN }}
-          FD_COMPETITION: WC
+          API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
         run: node scripts/update-results.mjs
 
       - name: Commit if changed
