@@ -1,15 +1,13 @@
 {
   "name": "wc2026-prediction-dashboard",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "private": true,
-  "description": "Interactive World Cup 2026 prediction dashboard (Elo + Poisson + Monte Carlo) with live results conditioning.",
+  "description": "Interactive World Cup 2026 prediction dashboard (Elo + Poisson + Monte Carlo) with live results conditioning, match preview, search, and optional live in-play scores.",
   "type": "module",
   "scripts": {
     "update": "node scripts/update-results.mjs",
     "dev": "python3 -m http.server 8000"
   },
-  "engines": {
-    "node": ">=18"
-  },
+  "engines": { "node": ">=18" },
   "license": "MIT"
 }

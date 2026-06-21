@@ -113,6 +113,10 @@ select:focus{outline:1px solid var(--accent)}
 .previewfoot b{color:var(--text);font-family:'Saira Condensed';font-weight:700;font-size:15px}
 .previewfoot small{color:var(--dim)}
 tr.hl{background:rgba(201,255,74,.07)}
+.liveslot{display:inline-flex;align-items:center;gap:6px;margin-right:8px}
+.livebadge{display:inline-flex;align-items:center;gap:5px;font-family:'Saira Condensed';font-weight:700;font-size:11px;letter-spacing:.06em;color:#0a0e17;background:var(--loss);padding:2px 7px;border-radius:5px}
+.livebadge .dotlive{width:6px;height:6px;border-radius:50%;background:#0a0e17;animation:pulse 1.4s infinite}
+.livescore{font-family:'Saira Condensed';font-weight:800;font-size:14px;color:var(--text);font-variant-numeric:tabular-nums;margin-left:2px}
 .statusbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--win);border-radius:11px;padding:10px 14px;margin-bottom:16px;font-size:13px;color:var(--muted)}
 .statusbar b{color:var(--text);font-family:'Saira Condensed';font-weight:700;letter-spacing:.02em}
 .statusbar .live{width:8px;height:8px;border-radius:50%;background:var(--win);box-shadow:0 0 0 0 rgba(55,210,127,.5);animation:pulse 1.8s infinite}
@@ -570,10 +574,10 @@ function renderPreview(){
     const badge = t===today?'<span class="todaybadge">TODAY</span>':(t>today&&t<today+2*864e5)?'<span class="soonbadge">UP NEXT</span>':'';
     const favN=m.w>=m.l?m.h:m.a, favP=Math.max(m.w,m.l);
     const read = favP>0.6?`${ABBR[favN]||favN} strongly favored`:(Math.abs(m.w-m.l)<0.08?'Even match-up':`${ABBR[favN]||favN} slight edge`);
-    html+=`<div class="match preview">
+    html+=`<div class="match preview" data-mk="${m.g}|${m.h}|${m.a}">
       <div class="top">
         <span class="gtag">Group ${m.g} · MD${m.day}</span>
-        <span class="meta">${badge}${m.date} · ${m.venue}, ${m.city}</span>
+        <span class="meta"><span class="liveslot"></span>${badge}${m.date} · ${m.venue}, ${m.city}</span>
       </div>
       <div class="teams">
         <div class="tm">${teamEl(m.h)} ${formPill(form[m.h])}</div>
@@ -845,6 +849,32 @@ async function loadResults(){
   renderAll();
   doSim();
 })();
+
+/* ---- live in-play overlay (optional; needs /api/live serverless proxy) ---- */
+function applyLiveBadges(byKey){
+  document.querySelectorAll('.match.preview[data-mk]').forEach(card=>{
+    const slot=card.querySelector('.liveslot'); if(!slot) return;
+    const m=byKey[card.getAttribute('data-mk')];
+    if(m){
+      const min = m.status==='HT' ? 'HT' : (m.minute!=null ? m.minute+"'" : 'LIVE');
+      slot.innerHTML='<span class="livebadge"><span class="dotlive"></span>'+min+'</span>'+
+                     '<span class="livescore">'+m.hs+'–'+m.as+'</span>';
+    } else { slot.innerHTML=''; }
+  });
+}
+async function pollLive(){
+  try{
+    const r=await fetch('/api/live',{cache:'no-store'});
+    if(!r.ok) return;
+    const data=await r.json();
+    const byKey={};
+    (data.live||[]).forEach(m=>{ if(m.g) byKey[m.g+'|'+m.h+'|'+m.a]=m; });
+    applyLiveBadges(byKey);
+  }catch(e){/* no proxy deployed or offline — Preview stays as model-only */}
+}
+// Poll every 60s. Harmless if /api/live isn't deployed (fetch fails silently).
+setInterval(pollLive, 60000);
+pollLive();
 </script>
 </body>
 </html>

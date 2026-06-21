@@ -1,22 +1,31 @@
 #!/usr/bin/env node
 /**
- * update-results.mjs
+ * update-results.mjs  —  API-Football (API-SPORTS) edition
  * ------------------------------------------------------------
- * Fetches finished 2026 World Cup matches and rewrites results.json
- * in the schema the dashboard expects:
+ * Fetches finished 2026 World Cup GROUP-stage matches and rewrites
+ * results.json in the schema the dashboard expects:
  *   { updated, source, results:[ {g,h,a,hs,as}, ... ] }
  *
- * DEFAULT PROVIDER: football-data.org (free tier, needs a token).
- *   1. Get a free key at https://www.football-data.org/client/register
- *   2. Confirm your plan covers the World Cup competition (code "WC").
- *   3. Set env var FD_API_TOKEN (locally or as a GitHub Actions secret).
+ * PROVIDER: API-Football (https://www.api-football.com)
+ *   World Cup = league 1, season 2026. One call returns all 104 fixtures.
+ *   1. Create a free account, copy your key.
+ *   2. Set env var API_FOOTBALL_KEY (locally or as a GitHub Actions secret).
+ *   Free tier = ~100 requests/day; this script uses ONE request per run.
  *
- * The script is DEFENSIVE: if the fetch fails or returns zero finished
- * matches, it leaves results.json untouched so a bad run never wipes data.
+ * Direct API-SPORTS host (default):
+ *   https://v3.football.api-sports.io  + header  x-apisports-key
+ * If you instead subscribed via RapidAPI, set:
+ *   API_FOOTBALL_HOST=v3.football.api-sports.io   (or the RapidAPI host)
+ *   and switch the header block below to x-rapidapi-key / x-rapidapi-host.
  *
- * SWAP PROVIDERS: replace fetchMatches() with your own; just return an
- * array of { groupLetter, homeName, awayName, homeScore, awayScore }.
- * Keep NAME_MAP in sync so provider names resolve to the dashboard names.
+ * DESIGN NOTE: API-Football's fixture `round` is "Group Stage - 1"
+ * (the matchday), NOT the group letter. So we derive the group from the
+ * team via TEAM_GROUP — more reliable, and it naturally filters out
+ * knockout matches (home & away won't share a group).
+ *
+ * DEFENSIVE: on any fetch error or zero finished matches, results.json is
+ * left untouched so a bad run never wipes data. Unresolved team names are
+ * logged loudly and skipped rather than written as rows the app can't match.
  * ------------------------------------------------------------
  */
 import { readFileSync, writeFileSync } from "node:fs";
@@ -26,38 +35,42 @@ import { dirname, join } from "node:path";
 const __dir = dirname(fileURLToPath(import.meta.url));
 const OUT = join(__dir, "..", "results.json");
 
-const FD_TOKEN = process.env.FD_API_TOKEN || "";
-const FD_COMP  = process.env.FD_COMPETITION || "WC";   // football-data competition code
-const FD_URL   = `https://api.football-data.org/v4/competitions/${FD_COMP}/matches?status=FINISHED`;
+const KEY  = process.env.API_FOOTBALL_KEY || "";
+const HOST = process.env.API_FOOTBALL_HOST || "v3.football.api-sports.io";
+const URL  = `https://${HOST}/fixtures?league=1&season=2026`;
 
-/* Map provider team names -> dashboard names (must match GROUPS/ELO keys). */
+/* ---- group membership: team -> group letter (KEEP IN SYNC with the app) ---- */
+const GROUPS = {
+  A: ["Mexico","South Africa","South Korea","Czechia"],
+  B: ["Canada","Bosnia & H.","Qatar","Switzerland"],
+  C: ["Brazil","Morocco","Haiti","Scotland"],
+  D: ["USA","Paraguay","Australia","Turkiye"],
+  E: ["Germany","Curacao","Ivory Coast","Ecuador"],
+  F: ["Netherlands","Japan","Sweden","Tunisia"],
+  G: ["Iran","New Zealand","Belgium","Egypt"],
+  H: ["Spain","Cape Verde","Saudi Arabia","Uruguay"],
+  I: ["France","Senegal","Iraq","Norway"],
+  J: ["Argentina","Algeria","Austria","Jordan"],
+  K: ["Portugal","DR Congo","Uzbekistan","Colombia"],
+  L: ["England","Croatia","Ghana","Panama"],
+};
+const KNOWN_TEAMS = new Set(Object.values(GROUPS).flat());
+const TEAM_GROUP = {};
+for (const [g, teams] of Object.entries(GROUPS)) for (const t of teams) TEAM_GROUP[t] = g;
+
+/* ---- map provider names -> app names ---- */
 const NAME_MAP = {
-  "Korea Republic": "South Korea", "South Korea": "South Korea", "Korea, South": "South Korea", "Korea, Republic of": "South Korea", "Republic of Korea": "South Korea",
+  "Korea Republic": "South Korea", "South Korea": "South Korea", "Korea, South": "South Korea", "Republic of Korea": "South Korea",
   "Türkiye": "Turkiye", "Turkey": "Turkiye", "Turkiye": "Turkiye",
   "Côte d'Ivoire": "Ivory Coast", "Cote d'Ivoire": "Ivory Coast", "Ivory Coast": "Ivory Coast",
   "IR Iran": "Iran", "Iran": "Iran",
   "Bosnia and Herzegovina": "Bosnia & H.", "Bosnia & H.": "Bosnia & H.", "Bosnia-Herzegovina": "Bosnia & H.",
   "Czech Republic": "Czechia", "Czechia": "Czechia",
-  "DR Congo": "DR Congo", "Congo DR": "DR Congo", "Democratic Republic of Congo": "DR Congo",
+  "DR Congo": "DR Congo", "Congo DR": "DR Congo", "Democratic Republic of Congo": "DR Congo", "Congo": "DR Congo",
   "Cape Verde": "Cape Verde", "Cabo Verde": "Cape Verde", "Cape Verde Islands": "Cape Verde",
-  "United States": "USA", "USA": "USA", "United States of America": "USA", "United States MNT": "USA",
+  "United States": "USA", "USA": "USA", "United States of America": "USA",
   "Curaçao": "Curacao", "Curacao": "Curacao",
-  // identity entries (everyone else passes straight through if already correct)
 };
-
-/* The 48 dashboard team names. KEEP IN SYNC with GROUPS in index.html.
-   Any resolved name not in this set means a provider spelling slipped
-   through unmapped — the run will warn loudly and skip that match
-   rather than writing a row the dashboard can't match. */
-const KNOWN_TEAMS = new Set([
-  "Mexico","South Africa","South Korea","Czechia","Canada","Bosnia & H.","Qatar","Switzerland",
-  "Brazil","Morocco","Haiti","Scotland","USA","Paraguay","Australia","Turkiye","Germany","Curacao",
-  "Ivory Coast","Ecuador","Netherlands","Japan","Sweden","Tunisia","Iran","New Zealand","Belgium","Egypt",
-  "Spain","Cape Verde","Saudi Arabia","Uruguay","France","Senegal","Iraq","Norway","Argentina","Algeria",
-  "Austria","Jordan","Portugal","DR Congo","Uzbekistan","Colombia","England","Croatia","Ghana","Panama"
-]);
-
-/* fold accents + collapse whitespace so "Türkiye"/"Curaçao" resolve even if unmapped */
 const fold = (s) => (s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, " ").trim();
 function norm(n) {
   if (NAME_MAP[n]) return NAME_MAP[n];
@@ -65,42 +78,49 @@ function norm(n) {
   if (NAME_MAP[f]) return NAME_MAP[f];
   if (KNOWN_TEAMS.has(n)) return n;
   if (KNOWN_TEAMS.has(f)) return f;
-  return n; // unresolved — flagged later by validation
+  return n; // unresolved -> flagged in validation
 }
-const groupLetter = (g) => (g ? String(g).replace(/GROUP[_ ]?/i, "").trim().toUpperCase() : null);
+
+const FINISHED = new Set(["FT", "AET", "PEN"]);
 
 async function fetchMatches() {
-  if (!FD_TOKEN) throw new Error("FD_API_TOKEN not set");
-  const r = await fetch(FD_URL, { headers: { "X-Auth-Token": FD_TOKEN } });
-  if (!r.ok) throw new Error(`football-data ${r.status}: ${await r.text()}`);
-  const data = await r.json();
-  return (data.matches || [])
-    .filter((m) => m.stage === "GROUP_STAGE" && m.score?.fullTime)
-    .map((m) => ({
-      groupLetter: groupLetter(m.group),
-      homeName: m.homeTeam?.name,
-      awayName: m.awayTeam?.name,
-      homeScore: m.score.fullTime.home,
-      awayScore: m.score.fullTime.away,
+  if (!KEY) throw new Error("API_FOOTBALL_KEY not set");
+  const res = await fetch(URL, {
+    headers: { "x-apisports-key": KEY },
+    // RapidAPI users: replace the line above with:
+    // headers: { "x-rapidapi-key": KEY, "x-rapidapi-host": HOST },
+  });
+  if (!res.ok) throw new Error(`API-Football ${res.status}: ${await res.text()}`);
+  const data = await res.json();
+  if (data.errors && Object.keys(data.errors).length) {
+    throw new Error(`API-Football errors: ${JSON.stringify(data.errors)}`);
+  }
+  return (data.response || [])
+    .filter((f) => FINISHED.has(f.fixture?.status?.short))
+    .map((f) => ({
+      homeName: f.teams?.home?.name,
+      awayName: f.teams?.away?.name,
+      homeScore: f.goals?.home,
+      awayScore: f.goals?.away,
     }))
-    .filter((m) => m.groupLetter && m.homeName && m.awayName &&
+    .filter((m) => m.homeName && m.awayName &&
                    Number.isInteger(m.homeScore) && Number.isInteger(m.awayScore));
 }
 
 function toResults(raw) {
-  const out = [];
-  const unresolved = [];
+  const out = [], unresolved = [];
   for (const m of raw) {
     const h = norm(m.homeName), a = norm(m.awayName);
-    const bad = [];
-    if (!KNOWN_TEAMS.has(h)) bad.push(`home "${m.homeName}" → "${h}"`);
-    if (!KNOWN_TEAMS.has(a)) bad.push(`away "${m.awayName}" → "${a}"`);
-    if (!/^[A-L]$/.test(m.groupLetter)) bad.push(`group "${m.groupLetter}"`);
-    if (bad.length) { unresolved.push(bad.join(", ")); continue; }
-    out.push({ g: m.groupLetter, h, a, hs: m.homeScore, as: m.awayScore });
+    if (!KNOWN_TEAMS.has(h) || !KNOWN_TEAMS.has(a)) {
+      unresolved.push(`"${m.homeName}"->"${h}" vs "${m.awayName}"->"${a}"`);
+      continue;
+    }
+    const g = TEAM_GROUP[h];
+    if (TEAM_GROUP[a] !== g) continue; // not a group match (knockout) — skip
+    out.push({ g, h, a, hs: m.homeScore, as: m.awayScore });
   }
   if (unresolved.length) {
-    console.warn("⚠️  UNRESOLVED — these finished matches were SKIPPED (add to NAME_MAP):");
+    console.warn("⚠️  UNRESOLVED team names — skipped (add to NAME_MAP):");
     unresolved.forEach((u) => console.warn("   • " + u));
   }
   return out;
@@ -108,34 +128,26 @@ function toResults(raw) {
 
 async function main() {
   let raw;
-  try {
-    raw = await fetchMatches();
-  } catch (e) {
-    console.error("Fetch failed, leaving results.json unchanged:", e.message);
-    process.exit(0); // exit 0 so the workflow doesn't fail the whole run
-  }
-  if (!raw.length) {
-    console.log("No finished group matches returned; results.json unchanged.");
-    process.exit(0);
-  }
+  try { raw = await fetchMatches(); }
+  catch (e) { console.error("Fetch failed, results.json unchanged:", e.message); process.exit(0); }
+
+  if (!raw.length) { console.log("No finished matches returned; results.json unchanged."); process.exit(0); }
+
   const results = toResults(raw);
+  if (!results.length) { console.log("No resolvable group results; results.json unchanged."); process.exit(0); }
+
   const today = new Date().toISOString().slice(0, 10);
-  const payload = { updated: today, source: `football-data.org (${FD_COMP})`, results };
+  const payload = { updated: today, source: "API-Football (league 1, season 2026)", results };
+  const next = JSON.stringify(payload, null, 2) + "\n";
 
   let prev = "";
   try { prev = readFileSync(OUT, "utf8"); } catch {}
-  const next = JSON.stringify(payload, null, 2) + "\n";
-  if (prev.trim() === next.trim()) {
-    console.log("No change in results.");
-    process.exit(0);
-  }
+  if (prev.trim() === next.trim()) { console.log("No change in results."); process.exit(0); }
+
   writeFileSync(OUT, next);
-  console.log(`Wrote ${results.length} finished matches to results.json (${today}).`);
+  console.log(`Wrote ${results.length} finished group matches to results.json (${today}).`);
 }
 
-// Run only when invoked directly (so the module can be imported in tests).
-if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
-  main();
-}
+if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) main();
 
-export { norm, fold, NAME_MAP, KNOWN_TEAMS, toResults, groupLetter };
+export { norm, fold, NAME_MAP, KNOWN_TEAMS, TEAM_GROUP, toResults, fetchMatches };
