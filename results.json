@@ -1,6 +1,6 @@
 {
-  "updated": "2026-06-21",
-  "source": "manual — results through Jun 20 (Tunisia–Japan pending)",
+  "updated": "2026-06-22",
+  "source": "manual — results through Jun 21 (matchday 2 complete in groups A–H)",
   "results": [
     { "g": "A", "h": "Mexico",       "a": "South Africa",  "hs": 2, "as": 0 },
     { "g": "A", "h": "South Korea",  "a": "Czechia",       "hs": 2, "as": 1 },
@@ -27,8 +27,12 @@
     { "g": "F", "h": "Netherlands",  "a": "Sweden",        "hs": 5, "as": 1 },
     { "g": "G", "h": "Belgium",      "a": "Egypt",         "hs": 1, "as": 1 },
     { "g": "G", "h": "Iran",         "a": "New Zealand",   "hs": 2, "as": 2 },
+    { "g": "G", "h": "Belgium",      "a": "Iran",          "hs": 0, "as": 0 },
+    { "g": "G", "h": "New Zealand",  "a": "Egypt",         "hs": 1, "as": 3 },
     { "g": "H", "h": "Spain",        "a": "Cape Verde",    "hs": 0, "as": 0 },
     { "g": "H", "h": "Saudi Arabia", "a": "Uruguay",       "hs": 1, "as": 1 },
+    { "g": "H", "h": "Spain",        "a": "Saudi Arabia",  "hs": 4, "as": 0 },
+    { "g": "H", "h": "Uruguay",      "a": "Cape Verde",    "hs": 2, "as": 2 },
     { "g": "I", "h": "France",       "a": "Senegal",       "hs": 3, "as": 1 },
     { "g": "I", "h": "Iraq",         "a": "Norway",        "hs": 1, "as": 4 },
     { "g": "J", "h": "Argentina",    "a": "Algeria",       "hs": 3, "as": 0 },
