@@ -1,31 +1,22 @@
 #!/usr/bin/env node
 /**
- * update-results.mjs  —  API-Football (API-SPORTS) edition
+ * update-results.mjs  —  ESPN (keyless) edition
  * ------------------------------------------------------------
- * Fetches finished 2026 World Cup GROUP-stage matches and rewrites
- * results.json in the schema the dashboard expects:
+ * Fetches finished 2026 World Cup GROUP-stage matches from ESPN's public
+ * scoreboard endpoint and rewrites results.json in the dashboard's schema:
  *   { updated, source, results:[ {g,h,a,hs,as}, ... ] }
  *
- * PROVIDER: API-Football (https://www.api-football.com)
- *   World Cup = league 1, season 2026. One call returns all 104 fixtures.
- *   1. Create a free account, copy your key.
- *   2. Set env var API_FOOTBALL_KEY (locally or as a GitHub Actions secret).
- *   Free tier = ~100 requests/day; this script uses ONE request per run.
+ * PROVIDER: ESPN hidden scoreboard API — NO API KEY REQUIRED, NO COST.
+ *   https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard
+ *   The `dates=YYYYMMDD-YYYYMMDD` range returns every match in the window.
  *
- * Direct API-SPORTS host (default):
- *   https://v3.football.api-sports.io  + header  x-apisports-key
- * If you instead subscribed via RapidAPI, set:
- *   API_FOOTBALL_HOST=v3.football.api-sports.io   (or the RapidAPI host)
- *   and switch the header block below to x-rapidapi-key / x-rapidapi-host.
+ *   ⚠️ UNOFFICIAL: ESPN can change or remove this endpoint without notice.
+ *   This script is defensive — on any error, or if nothing parses, it leaves
+ *   results.json UNCHANGED so a bad fetch never wipes your data.
  *
- * DESIGN NOTE: API-Football's fixture `round` is "Group Stage - 1"
- * (the matchday), NOT the group letter. So we derive the group from the
- * team via TEAM_GROUP — more reliable, and it naturally filters out
- * knockout matches (home & away won't share a group).
- *
- * DEFENSIVE: on any fetch error or zero finished matches, results.json is
- * left untouched so a bad run never wipes data. Unresolved team names are
- * logged loudly and skipped rather than written as rows the app can't match.
+ * Group is derived from the team (not from ESPN's fields), which also filters
+ * out knockout matches (the two teams won't share a group). Unresolved team
+ * names are logged loudly and skipped.
  * ------------------------------------------------------------
  */
 import { readFileSync, writeFileSync } from "node:fs";
@@ -35,9 +26,9 @@ import { dirname, join } from "node:path";
 const __dir = dirname(fileURLToPath(import.meta.url));
 const OUT = join(__dir, "..", "results.json");
 
-const KEY  = process.env.API_FOOTBALL_KEY || "";
-const HOST = process.env.API_FOOTBALL_HOST || "v3.football.api-sports.io";
-const URL  = `https://${HOST}/fixtures?league=1&season=2026`;
+// Whole group stage window. ESPN honours the date range in one call.
+const URL =
+  "https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard?dates=20260611-20260628&limit=300";
 
 /* ---- group membership: team -> group letter (KEEP IN SYNC with the app) ---- */
 const GROUPS = {
@@ -58,18 +49,18 @@ const KNOWN_TEAMS = new Set(Object.values(GROUPS).flat());
 const TEAM_GROUP = {};
 for (const [g, teams] of Object.entries(GROUPS)) for (const t of teams) TEAM_GROUP[t] = g;
 
-/* ---- map provider names -> app names ---- */
+/* ---- map ESPN display names -> app names ---- */
 const NAME_MAP = {
-  "Korea Republic": "South Korea", "South Korea": "South Korea", "Korea, South": "South Korea", "Republic of Korea": "South Korea",
-  "Türkiye": "Turkiye", "Turkey": "Turkiye", "Turkiye": "Turkiye",
-  "Côte d'Ivoire": "Ivory Coast", "Cote d'Ivoire": "Ivory Coast", "Ivory Coast": "Ivory Coast",
-  "IR Iran": "Iran", "Iran": "Iran",
-  "Bosnia and Herzegovina": "Bosnia & H.", "Bosnia & H.": "Bosnia & H.", "Bosnia-Herzegovina": "Bosnia & H.",
-  "Czech Republic": "Czechia", "Czechia": "Czechia",
-  "DR Congo": "DR Congo", "Congo DR": "DR Congo", "Democratic Republic of Congo": "DR Congo", "Congo": "DR Congo",
-  "Cape Verde": "Cape Verde", "Cabo Verde": "Cape Verde", "Cape Verde Islands": "Cape Verde",
-  "United States": "USA", "USA": "USA", "United States of America": "USA",
-  "Curaçao": "Curacao", "Curacao": "Curacao",
+  "South Korea":"South Korea","Korea Republic":"South Korea",
+  "Czechia":"Czechia","Czech Republic":"Czechia",
+  "Türkiye":"Turkiye","Turkey":"Turkiye","Turkiye":"Turkiye",
+  "Ivory Coast":"Ivory Coast","Côte d'Ivoire":"Ivory Coast","Cote d'Ivoire":"Ivory Coast",
+  "Bosnia and Herzegovina":"Bosnia & H.","Bosnia & Herzegovina":"Bosnia & H.","Bosnia-Herzegovina":"Bosnia & H.",
+  "DR Congo":"DR Congo","Congo DR":"DR Congo","Congo":"DR Congo","Democratic Republic of the Congo":"DR Congo",
+  "Cape Verde":"Cape Verde","Cabo Verde":"Cape Verde","Cape Verde Islands":"Cape Verde",
+  "United States":"USA","USA":"USA",
+  "Curaçao":"Curacao","Curacao":"Curacao",
+  "IR Iran":"Iran","Iran":"Iran",
 };
 const fold = (s) => (s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, " ").trim();
 function norm(n) {
@@ -81,30 +72,29 @@ function norm(n) {
   return n; // unresolved -> flagged in validation
 }
 
-const FINISHED = new Set(["FT", "AET", "PEN"]);
-
 async function fetchMatches() {
-  if (!KEY) throw new Error("API_FOOTBALL_KEY not set");
-  const res = await fetch(URL, {
-    headers: { "x-apisports-key": KEY },
-    // RapidAPI users: replace the line above with:
-    // headers: { "x-rapidapi-key": KEY, "x-rapidapi-host": HOST },
-  });
-  if (!res.ok) throw new Error(`API-Football ${res.status}: ${await res.text()}`);
+  const res = await fetch(URL, { headers: { accept: "application/json" } });
+  if (!res.ok) throw new Error(`ESPN ${res.status}: ${await res.text()}`);
   const data = await res.json();
-  if (data.errors && Object.keys(data.errors).length) {
-    throw new Error(`API-Football errors: ${JSON.stringify(data.errors)}`);
+  const out = [];
+  for (const ev of data.events || []) {
+    const c = ev.competitions?.[0];
+    if (!c) continue;
+    const st = c.status?.type || {};
+    const finished = st.completed === true || String(st.id) === "3" || st.state === "post";
+    if (!finished) continue;
+    const comps = c.competitors || [];
+    const home = comps.find((x) => x.homeAway === "home");
+    const away = comps.find((x) => x.homeAway === "away");
+    if (!home || !away) continue;
+    const hn = home.team?.name || home.team?.displayName;
+    const an = away.team?.name || away.team?.displayName;
+    const hs = parseInt(home.score, 10);
+    const as = parseInt(away.score, 10);
+    if (!hn || !an || Number.isNaN(hs) || Number.isNaN(as)) continue;
+    out.push({ homeName: hn, awayName: an, homeScore: hs, awayScore: as });
   }
-  return (data.response || [])
-    .filter((f) => FINISHED.has(f.fixture?.status?.short))
-    .map((f) => ({
-      homeName: f.teams?.home?.name,
-      awayName: f.teams?.away?.name,
-      homeScore: f.goals?.home,
-      awayScore: f.goals?.away,
-    }))
-    .filter((m) => m.homeName && m.awayName &&
-                   Number.isInteger(m.homeScore) && Number.isInteger(m.awayScore));
+  return out;
 }
 
 function toResults(raw) {
@@ -137,7 +127,7 @@ async function main() {
   if (!results.length) { console.log("No resolvable group results; results.json unchanged."); process.exit(0); }
 
   const today = new Date().toISOString().slice(0, 10);
-  const payload = { updated: today, source: "API-Football (league 1, season 2026)", results };
+  const payload = { updated: today, source: "ESPN (fifa.world)", results };
   const next = JSON.stringify(payload, null, 2) + "\n";
 
   let prev = "";
