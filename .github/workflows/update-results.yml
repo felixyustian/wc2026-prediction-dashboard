@@ -1,9 +1,12 @@
 name: Update World Cup results
 
+# Fetches finished matches from ESPN (no API key needed) and commits results.json.
+# The commit to the production branch triggers Vercel to redeploy.
+
 on:
   schedule:
-    - cron: "0 4,8,12,16,20 * * *"
-  workflow_dispatch: {}
+    - cron: "0 4,8,12,16,20 * * *"   # five times daily (UTC) during the tournament
+  workflow_dispatch: {}              # manual "Run workflow" button
 
 permissions:
   contents: write
@@ -22,8 +25,6 @@ jobs:
           node-version: "22"
 
       - name: Fetch latest results
-        env:
-          API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
         run: node scripts/update-results.mjs
 
       - name: Commit if changed
