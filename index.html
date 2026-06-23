@@ -117,6 +117,23 @@ tr.hl{background:rgba(201,255,74,.07)}
 .livebadge{display:inline-flex;align-items:center;gap:5px;font-family:'Saira Condensed';font-weight:700;font-size:11px;letter-spacing:.06em;color:#0a0e17;background:var(--loss);padding:2px 7px;border-radius:5px}
 .livebadge .dotlive{width:6px;height:6px;border-radius:50%;background:#0a0e17;animation:pulse 1.4s infinite}
 .livescore{font-family:'Saira Condensed';font-weight:800;font-size:14px;color:var(--text);font-variant-numeric:tabular-nums;margin-left:2px}
+/* LIVE NOW banner */
+.livenow{margin:0 0 18px;border:1px solid rgba(255,77,79,.35);border-radius:13px;background:linear-gradient(180deg,rgba(255,77,79,.08),rgba(255,77,79,.02));overflow:hidden}
+.livenow[hidden]{display:none}
+.lvhead{display:flex;align-items:center;gap:9px;font-family:'Saira Condensed';font-weight:700;font-size:13px;letter-spacing:.1em;color:var(--loss);padding:9px 14px;border-bottom:1px solid rgba(255,77,79,.18);text-transform:uppercase}
+.lvpulse{width:9px;height:9px;border-radius:50%;background:var(--loss);box-shadow:0 0 0 0 rgba(255,77,79,.6);animation:lvring 1.5s infinite}
+@keyframes lvring{0%{box-shadow:0 0 0 0 rgba(255,77,79,.55)}70%{box-shadow:0 0 0 9px rgba(255,77,79,0)}100%{box-shadow:0 0 0 0 rgba(255,77,79,0)}}
+.lvscroll{display:flex;gap:10px;overflow-x:auto;padding:13px 14px;scrollbar-width:thin}
+.lvcard{flex:0 0 auto;min-width:158px;background:var(--panel);border:1px solid var(--line2);border-radius:10px;padding:10px 12px}
+.lvgrp{font-size:10.5px;letter-spacing:.08em;color:var(--dim);font-family:'Saira',sans-serif;text-transform:uppercase;margin-bottom:5px}
+.lvrow{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.lvteam{font-family:'Saira Condensed';font-weight:700;font-size:15px;color:var(--muted)}
+.lvteam.b{color:var(--text)}
+.lvscore{font-family:'Saira Condensed';font-weight:800;font-size:21px;color:var(--text);font-variant-numeric:tabular-nums;white-space:nowrap}
+.lvscore i{color:var(--dim);font-style:normal;margin:0 3px}
+.lvfull{font-size:11px;color:var(--dim);margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lvmin{display:inline-flex;align-items:center;gap:5px;margin-top:7px;font-family:'Saira Condensed';font-weight:700;font-size:12px;color:var(--loss)}
+.livepill{display:inline-flex!important;align-items:center;gap:6px;color:var(--loss)!important;border-color:rgba(255,77,79,.4)!important}
 .statusbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--win);border-radius:11px;padding:10px 14px;margin-bottom:16px;font-size:13px;color:var(--muted)}
 .statusbar b{color:var(--text);font-family:'Saira Condensed';font-weight:700;letter-spacing:.02em}
 .statusbar .live{width:8px;height:8px;border-radius:50%;background:var(--win);box-shadow:0 0 0 0 rgba(55,210,127,.5);animation:pulse 1.8s infinite}
@@ -169,6 +186,8 @@ tbody tr:hover{background:var(--raise)}
     <b>48 teams</b><b>104 matches</b><b>16 venues</b><b>Model: <i>Elo + Poisson</i></b><b id="simlabel">Simulations: <i>—</i></b>
   </div>
 </header>
+
+<section class="livenow" id="liveNow" hidden></section>
 
 <div class="tabs" id="tabs">
   <button class="tab active" data-v="matches">Match Predictions</button>
@@ -850,30 +869,68 @@ async function loadResults(){
   doSim();
 })();
 
-/* ---- live in-play overlay (optional; needs /api/live serverless proxy) ---- */
+/* ---- live in-play overlay (needs /api/live serverless proxy) ---- */
+function fmtMinute(m){
+  const s=(m.status||'').toLowerCase().trim();
+  if(s==='halftime'||s==='half-time'||s==='half time'||s==='ht') return 'HT';
+  let mn=m.minute;
+  if(mn==null||mn==='') return 'LIVE';
+  mn=String(mn);
+  return /['′]/.test(mn) ? mn : mn+"'";
+}
 function applyLiveBadges(byKey){
   document.querySelectorAll('.match.preview[data-mk]').forEach(card=>{
     const slot=card.querySelector('.liveslot'); if(!slot) return;
     const m=byKey[card.getAttribute('data-mk')];
     if(m){
-      const min = m.status==='HT' ? 'HT' : (m.minute!=null ? m.minute+"'" : 'LIVE');
-      slot.innerHTML='<span class="livebadge"><span class="dotlive"></span>'+min+'</span>'+
+      slot.innerHTML='<span class="livebadge"><span class="dotlive"></span>'+fmtMinute(m)+'</span>'+
                      '<span class="livescore">'+m.hs+'–'+m.as+'</span>';
     } else { slot.innerHTML=''; }
   });
 }
+function renderLiveNow(live){
+  const box=document.getElementById('liveNow');
+  const host=document.querySelector('.flagrow');
+  let pill=document.getElementById('livePill');
+  if(!live||!live.length){
+    if(box){box.hidden=true;box.innerHTML='';}
+    if(pill)pill.style.display='none';
+    return;
+  }
+  // header pill
+  if(host){
+    if(!pill){pill=document.createElement('b');pill.id='livePill';pill.className='livepill';host.appendChild(pill);}
+    pill.style.display='';
+    pill.innerHTML='<span class="dotlive"></span>'+live.length+' LIVE';
+  }
+  // banner cards
+  const cards=live.map(m=>{
+    const ha=(typeof ABBR!=='undefined'&&ABBR[m.h])||m.h, aa=(typeof ABBR!=='undefined'&&ABBR[m.a])||m.a;
+    const hb=m.hs>m.as?'b':'', ab=m.as>m.hs?'b':'';
+    return `<div class="lvcard">
+      <div class="lvgrp">${m.g?('Group '+m.g):'World Cup'}</div>
+      <div class="lvrow"><span class="lvteam ${hb}">${ha}</span><span class="lvscore">${m.hs}<i>–</i>${m.as}</span><span class="lvteam ${ab}">${aa}</span></div>
+      <div class="lvfull">${m.h} v ${m.a}</div>
+      <div class="lvmin"><span class="dotlive"></span>${fmtMinute(m)}</div>
+    </div>`;
+  }).join('');
+  box.innerHTML=`<div class="lvhead"><span class="lvpulse"></span>Live now · ${live.length} match${live.length>1?'es':''} in play</div><div class="lvscroll">${cards}</div>`;
+  box.hidden=false;
+}
 async function pollLive(){
   try{
     const r=await fetch('/api/live',{cache:'no-store'});
-    if(!r.ok) return;
+    if(!r.ok){renderLiveNow([]);return;}
     const data=await r.json();
+    const live=(data.live||[]);
     const byKey={};
-    (data.live||[]).forEach(m=>{ if(m.g) byKey[m.g+'|'+m.h+'|'+m.a]=m; });
+    live.forEach(m=>{ if(m.g) byKey[m.g+'|'+m.h+'|'+m.a]=m; });
     applyLiveBadges(byKey);
-  }catch(e){/* no proxy deployed or offline — Preview stays as model-only */}
+    renderLiveNow(live);
+  }catch(e){/* no proxy / offline — hide live UI, model stays intact */ renderLiveNow([]);}
 }
-// Poll every 60s. Harmless if /api/live isn't deployed (fetch fails silently).
-setInterval(pollLive, 60000);
+// Poll every 30s while the page is open. Harmless if /api/live isn't deployed.
+setInterval(pollLive, 30000);
 pollLive();
 </script>
 </body>
