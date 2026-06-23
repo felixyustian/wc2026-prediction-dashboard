@@ -1,12 +1,9 @@
 name: Update World Cup results
 
-# Fetches finished matches from API-Football and commits results.json.
-# The commit to the production branch triggers Vercel to redeploy.
-
 on:
   schedule:
-    - cron: "0 4,8,12,16,20 * * *"   # five times daily (UTC) during the tournament
-  workflow_dispatch: {}              # manual "Run workflow" button
+    - cron: "0 4,8,12,16,20 * * *"
+  workflow_dispatch: {}
 
 permissions:
   contents: write
@@ -36,8 +33,3 @@ jobs:
           file_pattern: results.json
           commit_user_name: wc-results-bot
           commit_user_email: actions@users.noreply.github.com
-            git commit -m "chore: update results.json ($(date -u +%Y-%m-%d))"
-            git push
-          else
-            echo "No changes to commit."
-          fi
