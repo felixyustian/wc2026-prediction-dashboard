@@ -1,26 +1,20 @@
 // api/live.js — Vercel Serverless Function (Node runtime)
 // ---------------------------------------------------------------
-// Proxies API-Football's live fixtures for the 2026 World Cup so the
-// browser never sees your API key. The dashboard polls THIS endpoint
-// (same origin: /api/live), not API-Football directly.
+// Proxies ESPN's public FIFA World Cup scoreboard for in-play matches.
+// NO API KEY REQUIRED — ESPN's endpoint is open. The browser polls this
+// same-origin /api/live so you don't depend on any third-party CORS.
 //
-// Setup:
-//   Vercel → Project → Settings → Environment Variables →
-//     API_FOOTBALL_KEY = <your key>   (Production + Preview)
-//   Drop this file at  api/live.js  in the repo root. Vercel auto-detects
-//   /api/* as serverless functions — no extra config needed.
+// Drop at  api/live.js  in the repo root. Vercel auto-detects /api/* as
+// serverless functions — no env var, no config needed.
 //
-// KEY POINT — edge caching collapses client polls into few upstream calls:
-//   The Cache-Control below makes Vercel cache the response for 30s and
-//   serve it to ALL visitors. So 100 people polling every 10s still costs
-//   ~2 upstream API-Football calls/minute, not 600. See the rate-limit note
-//   at the bottom of this file.
+// Edge-cached 20s so repeated polls collapse into few upstream calls.
+// ESPN is unofficial: if it changes/breaks, this returns an error and the
+// dashboard's Preview tab simply stays model-only (it fails silently).
 // ---------------------------------------------------------------
 
-const HOST = process.env.API_FOOTBALL_HOST || "v3.football.api-sports.io";
-const URL = `https://${HOST}/fixtures?league=1&season=2026&live=all`;
+const URL =
+  "https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard";
 
-// team -> group (kept tiny; only used to tag live matches with a group)
 const GROUPS = {
   A:["Mexico","South Africa","South Korea","Czechia"], B:["Canada","Bosnia & H.","Qatar","Switzerland"],
   C:["Brazil","Morocco","Haiti","Scotland"], D:["USA","Paraguay","Australia","Turkiye"],
@@ -37,42 +31,32 @@ const fold = (s)=> (s||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").trim(
 const norm = (n)=> NAME_MAP[n] || NAME_MAP[fold(n)] || n;
 
 export default async function handler(req, res) {
-  // cache at the edge: 30s fresh, serve-stale-while-revalidating for 15s
-  res.setHeader("Cache-Control", "public, s-maxage=30, stale-while-revalidate=15");
-
-  const key = process.env.API_FOOTBALL_KEY;
-  if (!key) return res.status(500).json({ error: "API_FOOTBALL_KEY not configured" });
-
+  res.setHeader("Cache-Control", "public, s-maxage=20, stale-while-revalidate=15");
   try {
-    const r = await fetch(URL, { headers: { "x-apisports-key": key } });
+    const r = await fetch(URL, { headers: { accept: "application/json" } });
     if (!r.ok) return res.status(502).json({ error: `upstream ${r.status}` });
     const data = await r.json();
-
-    const live = (data.response || []).map((f) => {
-      const h = norm(f.teams?.home?.name), a = norm(f.teams?.away?.name);
-      return {
-        g: TEAM_GROUP[h] || null,
-        h, a,
-        hs: f.goals?.home ?? 0,
-        as: f.goals?.away ?? 0,
-        minute: f.fixture?.status?.elapsed ?? null, // e.g. 63
-        status: f.fixture?.status?.short ?? null,    // 1H, HT, 2H, ET, P...
-      };
-    });
-
+    const live = [];
+    for (const ev of data.events || []) {
+      const c = ev.competitions?.[0]; if (!c) continue;
+      const st = c.status?.type || {};
+      if (st.state !== "in") continue;                 // only in-progress matches
+      const comps = c.competitors || [];
+      const home = comps.find((x) => x.homeAway === "home");
+      const away = comps.find((x) => x.homeAway === "away");
+      if (!home || !away) continue;
+      const h = norm(home.team?.name || home.team?.displayName);
+      const a = norm(away.team?.name || away.team?.displayName);
+      live.push({
+        g: TEAM_GROUP[h] || null, h, a,
+        hs: parseInt(home.score, 10) || 0,
+        as: parseInt(away.score, 10) || 0,
+        minute: c.status?.displayClock || null,        // e.g. "63'"
+        status: st.shortDetail || st.description || null,
+      });
+    }
     return res.status(200).json({ updated: new Date().toISOString(), count: live.length, live });
   } catch (e) {
     return res.status(502).json({ error: String(e?.message || e) });
   }
 }
-
-/* RATE-LIMIT REALITY (read before relying on "live"):
- * Even with 30s edge caching, each cache miss costs 1 upstream call.
- *   30s cache  -> ~2 calls/min -> ~720/day across a 6h live window.
- * API-Football FREE tier = ~100 calls/day -> NOT enough for all-day 30s live.
- * Options:
- *   - Stay free: raise s-maxage to ~300 (5-min "near-live"); ~12/hr -> ~72/day.
- *   - Go live for real: API-Football Pro (~$19/mo) lifts the daily cap.
- *   - Only mount the poller when a match is actually in progress (your
- *     schedule knows kickoff times), so you never poll during dead hours.
- */
