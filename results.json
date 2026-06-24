@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-23",
+  "updated": "2026-06-24",
   "source": "ESPN (fifa.world)",
   "results": [
     {
@@ -315,6 +315,27 @@
       "h": "Portugal",
       "a": "Uzbekistan",
       "hs": 5,
+      "as": 0
+    },
+    {
+      "g": "L",
+      "h": "England",
+      "a": "Ghana",
+      "hs": 0,
+      "as": 0
+    },
+    {
+      "g": "L",
+      "h": "Panama",
+      "a": "Croatia",
+      "hs": 0,
+      "as": 1
+    },
+    {
+      "g": "K",
+      "h": "Colombia",
+      "a": "DR Congo",
+      "hs": 1,
       "as": 0
     }
   ]
