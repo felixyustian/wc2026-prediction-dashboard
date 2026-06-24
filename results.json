@@ -337,6 +337,20 @@
       "a": "DR Congo",
       "hs": 1,
       "as": 0
+    },
+    {
+      "g": "B",
+      "h": "Bosnia & H.",
+      "a": "Qatar",
+      "hs": 3,
+      "as": 1
+    },
+    {
+      "g": "B",
+      "h": "Switzerland",
+      "a": "Canada",
+      "hs": 2,
+      "as": 1
     }
   ]
 }
