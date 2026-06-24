@@ -210,6 +210,9 @@ tbody tr:hover{background:var(--raise)}
         <option value="3">Matchday 3</option>
       </select>
     </label>
+    <label class="fld">Date
+      <select id="fDate"><option value="all">All dates</option></select>
+    </label>
   </div>
   <div class="grp">
     <label class="fld">Find
@@ -619,8 +622,8 @@ function renderPreview(){
 }
 
 function renderMatches(){
-  const fg=$("#fGroup").value, fd=$("#fDay").value;
-  let list=matchProbs.filter(m=>(fg==="all"||m.g===fg)&&(fd==="all"||String(m.day)===fd)&&matchHit(m,SEARCH));
+  const fg=$("#fGroup").value, fd=$("#fDay").value, fdt=($("#fDate")?$("#fDate").value:"all");
+  let list=matchProbs.filter(m=>(fg==="all"||m.g===fg)&&(fd==="all"||String(m.day)===fd)&&(fdt==="all"||m.date===fdt)&&matchHit(m,SEARCH));
   // group by date
   const byDate={};
   list.forEach(m=>{(byDate[m.date]=byDate[m.date]||[]).push(m);});
@@ -797,6 +800,14 @@ $("#searchClear").onclick=()=>{
 $("#fGroup").innerHTML='<option value="all">All groups</option>'+Object.keys(GROUPS).map(g=>`<option value="${g}">Group ${g}</option>`).join("");
 $("#fGroup").onchange=renderMatches;
 $("#fDay").onchange=renderMatches;
+// build the Date options from the actual fixture dates, in chronological order
+(function(){
+  const seen=new Set(), dates=[];
+  MATCHES.forEach(m=>{ const d=m[4]; if(d && !seen.has(d)){ seen.add(d); dates.push(d); } });
+  dates.sort((a,b)=>parseDate(a)-parseDate(b));
+  $("#fDate").innerHTML='<option value="all">All dates</option>'+dates.map(d=>`<option value="${d}">${d}</option>`).join("");
+  $("#fDate").onchange=renderMatches;
+})();
 
 /* ---- simulation control ---- */
 function doSim(){
