@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-24",
+  "updated": "2026-06-25",
   "source": "ESPN (fifa.world)",
   "results": [
     {
@@ -351,6 +351,34 @@
       "a": "Canada",
       "hs": 2,
       "as": 1
+    },
+    {
+      "g": "C",
+      "h": "Morocco",
+      "a": "Haiti",
+      "hs": 4,
+      "as": 2
+    },
+    {
+      "g": "C",
+      "h": "Scotland",
+      "a": "Brazil",
+      "hs": 0,
+      "as": 3
+    },
+    {
+      "g": "A",
+      "h": "Czechia",
+      "a": "Mexico",
+      "hs": 0,
+      "as": 3
+    },
+    {
+      "g": "A",
+      "h": "South Africa",
+      "a": "South Korea",
+      "hs": 1,
+      "as": 0
     }
   ]
 }
