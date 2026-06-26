@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-25",
+  "updated": "2026-06-26",
   "source": "ESPN (fifa.world)",
   "results": [
     {
@@ -379,6 +379,48 @@
       "a": "South Korea",
       "hs": 1,
       "as": 0
+    },
+    {
+      "g": "E",
+      "h": "Curacao",
+      "a": "Ivory Coast",
+      "hs": 0,
+      "as": 2
+    },
+    {
+      "g": "E",
+      "h": "Ecuador",
+      "a": "Germany",
+      "hs": 2,
+      "as": 1
+    },
+    {
+      "g": "F",
+      "h": "Japan",
+      "a": "Sweden",
+      "hs": 1,
+      "as": 1
+    },
+    {
+      "g": "F",
+      "h": "Tunisia",
+      "a": "Netherlands",
+      "hs": 1,
+      "as": 3
+    },
+    {
+      "g": "D",
+      "h": "Paraguay",
+      "a": "Australia",
+      "hs": 0,
+      "as": 0
+    },
+    {
+      "g": "D",
+      "h": "Turkiye",
+      "a": "USA",
+      "hs": 3,
+      "as": 2
     }
   ]
 }
