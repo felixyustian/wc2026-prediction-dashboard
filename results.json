@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-26",
+  "updated": "2026-06-27",
   "source": "ESPN (fifa.world)",
   "results": [
     {
@@ -435,6 +435,34 @@
       "a": "Iraq",
       "hs": 5,
       "as": 0
+    },
+    {
+      "g": "H",
+      "h": "Cape Verde",
+      "a": "Saudi Arabia",
+      "hs": 0,
+      "as": 0
+    },
+    {
+      "g": "H",
+      "h": "Uruguay",
+      "a": "Spain",
+      "hs": 0,
+      "as": 1
+    },
+    {
+      "g": "G",
+      "h": "Egypt",
+      "a": "Iran",
+      "hs": 1,
+      "as": 1
+    },
+    {
+      "g": "G",
+      "h": "New Zealand",
+      "a": "Belgium",
+      "hs": 1,
+      "as": 5
     }
   ]
 }
