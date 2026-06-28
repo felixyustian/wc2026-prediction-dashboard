@@ -117,6 +117,30 @@ tr.hl{background:rgba(201,255,74,.07)}
 .livebadge{display:inline-flex;align-items:center;gap:5px;font-family:'Saira Condensed';font-weight:700;font-size:11px;letter-spacing:.06em;color:#0a0e17;background:var(--loss);padding:2px 7px;border-radius:5px}
 .livebadge .dotlive{width:6px;height:6px;border-radius:50%;background:#0a0e17;animation:pulse 1.4s infinite}
 .livescore{font-family:'Saira Condensed';font-weight:800;font-size:14px;color:var(--text);font-variant-numeric:tabular-nums;margin-left:2px}
+/* knockout bracket */
+.ko-board{display:flex;gap:14px;overflow-x:auto;padding-bottom:10px;scrollbar-width:thin}
+.ko-col{flex:0 0 auto;width:210px;display:flex;flex-direction:column;gap:10px}
+.ko-colhead{font-family:'Saira Condensed';font-weight:700;letter-spacing:.1em;text-transform:uppercase;font-size:13px;color:var(--accent2);padding:0 2px 4px}
+.ko-tie{background:var(--panel);border:1px solid var(--line2);border-radius:10px;padding:9px 11px}
+.ko-tie.upcoming{border-left:3px solid var(--accent)}
+.ko-tie.played{border-left:3px solid var(--win)}
+.ko-tie.live{border-left:3px solid var(--loss)}
+.ko-meta{font-size:10.5px;color:var(--dim);letter-spacing:.04em;margin-bottom:7px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.ko-badge{font-family:'Saira Condensed';font-weight:700;font-size:9px;letter-spacing:.08em;color:var(--muted);background:var(--panel2);border:1px solid var(--line);border-radius:4px;padding:1px 5px}
+.ko-team{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:3px 0}
+.ko-team+.ko-team{border-top:1px dashed var(--line)}
+.ko-ab{font-family:'Saira Condensed';font-weight:700;font-size:11px;color:var(--dim);width:34px;flex:0 0 34px}
+.ko-name{font-size:13px;color:var(--muted);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ko-name.tbd{color:var(--dim);font-style:italic}
+.ko-val{font-family:'Saira Condensed';font-weight:700;font-size:15px;color:var(--muted);font-variant-numeric:tabular-nums}
+.ko-team.win .ko-name{color:var(--text);font-weight:600}
+.ko-team.win .ko-ab{color:var(--accent)}
+.ko-team.win .ko-val{color:var(--accent)}
+.ko-team.lose{opacity:.55}
+.ko-pens{font-size:10.5px;color:var(--dim);text-align:right;margin-top:4px}
+.ko-livetag{display:inline-flex;align-items:center;gap:5px;font-family:'Saira Condensed';font-weight:700;font-size:10px;letter-spacing:.06em;color:#0a0e17;background:var(--loss);padding:1px 6px;border-radius:5px}
+.ko-empty{font-size:12px;color:var(--dim);background:var(--panel2);border:1px dashed var(--line);border-radius:9px;padding:14px 11px;text-align:center}
+.ko-3rd{border-left:1px solid var(--line);padding-left:14px}
 /* LIVE NOW banner */
 .livenow{margin:0 0 18px;border:1px solid rgba(255,77,79,.35);border-radius:13px;background:linear-gradient(180deg,rgba(255,77,79,.08),rgba(255,77,79,.02));overflow:hidden}
 .livenow[hidden]{display:none}
@@ -181,7 +205,7 @@ tbody tr:hover{background:var(--raise)}
 <header id="hdr">
   <div class="kicker">Canada · México · USA — June 11 / July 19, 2026</div>
   <h1>World Cup 2026<br><span>Prediction Engine</span></h1>
-  <p class="sub">Win/draw/loss probabilities for all 72 group matches and a Monte-Carlo forecast of every team's run to the final. All numbers are <b style="color:var(--text)">model estimates</b> derived from Elo ratings — not certainties. Knockout matchups don't exist yet, so the bracket is <b style="color:var(--text)">simulated</b>, not predicted.</p>
+  <p class="sub">Win/draw/loss probabilities for all 72 group matches and a Monte-Carlo forecast of every team's run to the final. All numbers are <b style="color:var(--text)">model estimates</b> derived from Elo ratings — not certainties. The group stage is complete; the <b style="color:var(--text)">Knockout Bracket</b> tab shows the real Round of 32 with single-match win probabilities, updating as ties are decided.</p>
   <div class="flagrow">
     <b>48 teams</b><b>104 matches</b><b>16 venues</b><b>Model: <i>Elo + Poisson</i></b><b id="simlabel">Simulations: <i>—</i></b>
   </div>
@@ -192,6 +216,7 @@ tbody tr:hover{background:var(--raise)}
 <div class="tabs" id="tabs">
   <button class="tab active" data-v="matches">Match Predictions</button>
   <button class="tab" data-v="preview">Match Preview</button>
+  <button class="tab" data-v="bracket">Knockout Bracket</button>
   <button class="tab" data-v="groups">Group Odds</button>
   <button class="tab" data-v="tourn">Tournament Odds</button>
   <button class="tab" data-v="about">Model</button>
@@ -241,6 +266,7 @@ tbody tr:hover{background:var(--raise)}
   <div class="statusbar" id="statusbar"></div>
   <div class="view active" id="view-matches"></div>
   <div class="view" id="view-preview"></div>
+  <div class="view" id="view-bracket"></div>
   <div class="view" id="view-groups"></div>
   <div class="view" id="view-tourn"></div>
   <div class="view" id="view-about"></div>
@@ -768,7 +794,7 @@ function renderStatus(){
     ' &nbsp;·&nbsp; odds below are '+(PLAYED_COUNT>0?'conditioned on actual results so far':'pre-tournament estimates');
 }
 
-function renderAll(){renderStatus();renderMatches();renderPreview();renderGroups();renderTourn();renderAbout();}
+function renderAll(){renderStatus();renderMatches();renderPreview();renderBracket();renderGroups();renderTourn();renderAbout();}
 
 /* ---- tabs ---- */
 document.querySelectorAll(".tab").forEach(tab=>tab.onclick=()=>{
@@ -862,6 +888,68 @@ function activeView(){const a=document.querySelector(".tab.active");return a?a.d
 /* ---- footer ---- */
 $("#foot").innerHTML='Model estimates only — Elo + Poisson single-match model, Monte-Carlo knockout simulation. Elo source: eloratings.net (top 18 exact, 19 Jan 2026); lower-ranked ratings approximate. Schedule: confirmed FIFA fixtures. Built '+stamp()+'. Not affiliated with FIFA. For entertainment / analysis, not betting advice.';
 
+/* ---- knockout bracket ---- */
+let KO=null;
+async function loadKnockout(){
+  try{
+    const res=await fetch("knockout.json",{cache:"no-store"});
+    if(res.ok){ const d=await res.json(); if(d&&d.rounds) KO=d; }
+  }catch(e){/* no knockout file yet — bracket tab shows a notice */}
+}
+function koCountry(city){
+  if(/Mexico City|Guadalajara|Monterrey/i.test(city||""))return "Mexico";
+  if(/Vancouver|Toronto/i.test(city||""))return "Canada";
+  return "USA";
+}
+function koElo(team,city){ const host=HOSTS.includes(team)&&koCountry(city)===team; return ELO[team]+(host?HOME_BONUS:0); }
+function koProb(h,a,city){ return koWin(koElo(h,city),koElo(a,city)); }
+function koWinner(m){
+  if(m.hs==null||m.as==null)return null;
+  if(m.hs>m.as)return "h"; if(m.as>m.hs)return "a";
+  if(m.adv)return m.adv;
+  if(m.pens)return m.pens[0]>m.pens[1]?"h":"a";
+  return null;
+}
+function koBadge(m){
+  if(m.hs==null)return "";
+  if(m.pens||(m.hs===m.as&&m.adv))return "PEN";
+  if(m.decided==="AET")return "AET";
+  return "FT";
+}
+function koTeamMini(t){ if(!t||t==="TBD")return '<span class="ko-name tbd">TBD</span>'; return `<span class="ko-ab">${ABBR[t]||""}</span><span class="ko-name">${t}</span>`; }
+function koTie(m){
+  const known=m.h&&m.a&&m.h!=="TBD"&&m.a!=="TBD";
+  const win=koWinner(m);
+  let hv="",av="";
+  if(m.hs!=null){hv=m.hs;av=m.as;}
+  else if(known){const p=koProb(m.h,m.a,m.city);hv=pc(p)+"%";av=pc(1-p)+"%";}
+  const cls=m.hs!=null?"played":(m.status==="live"?"live":"upcoming");
+  const bdg=koBadge(m);
+  return `<div class="ko-tie ${cls}" data-ko="${m.h}|${m.a}">
+    <div class="ko-meta">${m.date||""}${m.city?" · "+m.city:""}<span class="ko-liveslot"></span>${bdg?'<span class="ko-badge">'+bdg+'</span>':""}</div>
+    <div class="ko-team ${win==="h"?"win":(win==="a"?"lose":"")}">${koTeamMini(m.h)}<span class="ko-val">${hv}</span></div>
+    <div class="ko-team ${win==="a"?"win":(win==="h"?"lose":"")}">${koTeamMini(m.a)}<span class="ko-val">${av}</span></div>
+    ${m.pens?`<div class="ko-pens">pens ${m.pens[0]}–${m.pens[1]}</div>`:""}
+  </div>`;
+}
+function renderBracket(){
+  const box=$("#view-bracket"); if(!box)return;
+  if(!KO){box.innerHTML='<div class="note">The knockout bracket loads from <code>knockout.json</code>. It will appear here once that file is published.</div>';return;}
+  const order=[["R32","Round of 32"],["R16","Round of 16"],["QF","Quarter-finals"],["SF","Semi-finals"],["F","Final"]];
+  const r=KO.rounds||{};
+  const afterMap={R16:"Round of 32",QF:"Round of 16",SF:"quarter-finals",F:"semi-finals"};
+  let cols="";
+  order.forEach(([k,label])=>{
+    const ties=r[k]||[];
+    const inner=ties.length?ties.map(koTie).join(""):'<div class="ko-empty">Decided after '+(afterMap[k]||"previous round")+'</div>';
+    cols+=`<div class="ko-col"><div class="ko-colhead">${label}</div>${inner}</div>`;
+  });
+  const tp=r.TP||[];
+  if(tp.length) cols+=`<div class="ko-col ko-3rd"><div class="ko-colhead">Third place</div>${tp.map(koTie).join("")}</div>`;
+  const note='<div class="note" style="margin-bottom:14px;border-left-color:var(--accent2)">The Round of 32 is set from the final group standings. Percentages are the model\'s single-match win probability (Elo, with extra time and penalties folded into a no-draw coin flip). Completed ties show the real result; later rounds fill in as winners are decided.'+(KO.updated?' <span style="color:var(--dim)">Updated '+KO.updated+'.</span>':"")+'</div>';
+  box.innerHTML=note+'<div class="ko-board">'+cols+"</div>";
+}
+
 /* ---- init: try to load live results.json, then render + simulate ---- */
 async function loadResults(){
   try{
@@ -876,6 +964,7 @@ async function loadResults(){
 }
 (async()=>{
   await loadResults();
+  await loadKnockout();
   renderAll();
   doSim();
 })();
@@ -928,6 +1017,21 @@ function renderLiveNow(live){
   box.innerHTML=`<div class="lvhead"><span class="lvpulse"></span>Live now · ${live.length} match${live.length>1?'es':''} in play</div><div class="lvscroll">${cards}</div>`;
   box.hidden=false;
 }
+function applyLiveBracket(live){
+  const byKO={};
+  live.forEach(m=>{byKO[m.h+'|'+m.a]=m;byKO[m.a+'|'+m.h]=m;});
+  document.querySelectorAll('.ko-tie[data-ko]').forEach(card=>{
+    const slot=card.querySelector('.ko-liveslot'); if(!slot)return;
+    const key=card.getAttribute('data-ko');
+    const m=byKO[key];
+    if(m){
+      const [h]=key.split('|');
+      const hs=(m.h===h?m.hs:m.as), as=(m.h===h?m.as:m.hs);
+      slot.innerHTML='<span class="ko-livetag"><span class="dotlive"></span>'+fmtMinute(m)+' '+hs+'–'+as+'</span>';
+      card.classList.add('live');
+    } else { slot.innerHTML=''; }
+  });
+}
 async function pollLive(){
   try{
     const r=await fetch('/api/live',{cache:'no-store'});
@@ -937,6 +1041,7 @@ async function pollLive(){
     const byKey={};
     live.forEach(m=>{ if(m.g) byKey[m.g+'|'+m.h+'|'+m.a]=m; });
     applyLiveBadges(byKey);
+    applyLiveBracket(live);
     renderLiveNow(live);
   }catch(e){/* no proxy / offline — hide live UI, model stays intact */ renderLiveNow([]);}
 }

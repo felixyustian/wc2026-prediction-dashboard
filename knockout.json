@@ -1,0 +1,29 @@
+{
+  "updated": "2026-06-28",
+  "source": "seed — Round of 32 fixtures (top 2 per group + 8 best thirds)",
+  "rounds": {
+    "R32": [
+      { "id": 73, "h": "South Africa", "a": "Canada",       "date": "Sun Jun 28", "venue": "SoFi Stadium",         "city": "Inglewood",     "hs": null, "as": null, "status": "upcoming" },
+      { "id": 74, "h": "Germany",      "a": "Paraguay",     "date": "Mon Jun 29", "venue": "Gillette Stadium",     "city": "Foxborough",    "hs": null, "as": null, "status": "upcoming" },
+      { "id": 75, "h": "Netherlands",  "a": "Morocco",      "date": "Mon Jun 29", "venue": "Estadio BBVA",         "city": "Monterrey",     "hs": null, "as": null, "status": "upcoming" },
+      { "id": 76, "h": "Brazil",       "a": "Japan",        "date": "Mon Jun 29", "venue": "NRG Stadium",          "city": "Houston",       "hs": null, "as": null, "status": "upcoming" },
+      { "id": 77, "h": "France",       "a": "Sweden",       "date": "Tue Jun 30", "venue": "MetLife Stadium",      "city": "East Rutherford","hs": null, "as": null, "status": "upcoming" },
+      { "id": 78, "h": "Ivory Coast",  "a": "Norway",       "date": "Tue Jun 30", "venue": "AT&T Stadium",         "city": "Arlington",     "hs": null, "as": null, "status": "upcoming" },
+      { "id": 79, "h": "Mexico",       "a": "Ecuador",      "date": "Tue Jun 30", "venue": "Estadio Azteca",       "city": "Mexico City",   "hs": null, "as": null, "status": "upcoming" },
+      { "id": 80, "h": "England",      "a": "DR Congo",     "date": "Wed Jul 01", "venue": "Mercedes-Benz Stadium","city": "Atlanta",       "hs": null, "as": null, "status": "upcoming" },
+      { "id": 81, "h": "Belgium",      "a": "Senegal",      "date": "Wed Jul 01", "venue": "Lumen Field",          "city": "Seattle",       "hs": null, "as": null, "status": "upcoming" },
+      { "id": 82, "h": "USA",          "a": "Bosnia & H.",  "date": "Wed Jul 01", "venue": "Levi's Stadium",       "city": "Santa Clara",   "hs": null, "as": null, "status": "upcoming" },
+      { "id": 83, "h": "Spain",        "a": "Austria",      "date": "Thu Jul 02", "venue": "SoFi Stadium",         "city": "Los Angeles",   "hs": null, "as": null, "status": "upcoming" },
+      { "id": 84, "h": "Switzerland",  "a": "Algeria",      "date": "Thu Jul 02", "venue": "BC Place",             "city": "Vancouver",     "hs": null, "as": null, "status": "upcoming" },
+      { "id": 85, "h": "Portugal",     "a": "Croatia",      "date": "Thu Jul 02", "venue": "BMO Field",            "city": "Toronto",       "hs": null, "as": null, "status": "upcoming" },
+      { "id": 86, "h": "Argentina",    "a": "Cape Verde",   "date": "Fri Jul 03", "venue": "Hard Rock Stadium",    "city": "Miami",         "hs": null, "as": null, "status": "upcoming" },
+      { "id": 87, "h": "Colombia",     "a": "Ghana",        "date": "Fri Jul 03", "venue": "Arrowhead Stadium",    "city": "Kansas City",   "hs": null, "as": null, "status": "upcoming" },
+      { "id": 88, "h": "Egypt",        "a": "Australia",    "date": "Fri Jul 03", "venue": "AT&T Stadium",         "city": "Arlington",     "hs": null, "as": null, "status": "upcoming" }
+    ],
+    "R16": [],
+    "QF": [],
+    "SF": [],
+    "TP": [],
+    "F": []
+  }
+}
