@@ -9,9 +9,9 @@
         "date": "Sun, 28 Jun",
         "venue": "SoFi Stadium",
         "city": "Inglewood, California",
-        "status": "live",
-        "hs": null,
-        "as": null
+        "status": "final",
+        "hs": 0,
+        "as": 1
       },
       {
         "h": "Brazil",
@@ -166,7 +166,7 @@
     ],
     "R16": [
       {
-        "h": "Round of 32 1 Winner",
+        "h": "Canada",
         "a": "Round of 32 3 Winner",
         "date": "Sat, 04 Jul",
         "venue": "NRG Stadium",
