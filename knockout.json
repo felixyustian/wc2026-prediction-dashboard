@@ -1,29 +1,327 @@
 {
   "updated": "2026-06-28",
-  "source": "seed — Round of 32 fixtures (top 2 per group + 8 best thirds)",
+  "source": "ESPN (fifa.world) — knockout",
   "rounds": {
     "R32": [
-      { "id": 73, "h": "South Africa", "a": "Canada",       "date": "Sun Jun 28", "venue": "SoFi Stadium",         "city": "Inglewood",     "hs": null, "as": null, "status": "upcoming" },
-      { "id": 74, "h": "Germany",      "a": "Paraguay",     "date": "Mon Jun 29", "venue": "Gillette Stadium",     "city": "Foxborough",    "hs": null, "as": null, "status": "upcoming" },
-      { "id": 75, "h": "Netherlands",  "a": "Morocco",      "date": "Mon Jun 29", "venue": "Estadio BBVA",         "city": "Monterrey",     "hs": null, "as": null, "status": "upcoming" },
-      { "id": 76, "h": "Brazil",       "a": "Japan",        "date": "Mon Jun 29", "venue": "NRG Stadium",          "city": "Houston",       "hs": null, "as": null, "status": "upcoming" },
-      { "id": 77, "h": "France",       "a": "Sweden",       "date": "Tue Jun 30", "venue": "MetLife Stadium",      "city": "East Rutherford","hs": null, "as": null, "status": "upcoming" },
-      { "id": 78, "h": "Ivory Coast",  "a": "Norway",       "date": "Tue Jun 30", "venue": "AT&T Stadium",         "city": "Arlington",     "hs": null, "as": null, "status": "upcoming" },
-      { "id": 79, "h": "Mexico",       "a": "Ecuador",      "date": "Tue Jun 30", "venue": "Estadio Azteca",       "city": "Mexico City",   "hs": null, "as": null, "status": "upcoming" },
-      { "id": 80, "h": "England",      "a": "DR Congo",     "date": "Wed Jul 01", "venue": "Mercedes-Benz Stadium","city": "Atlanta",       "hs": null, "as": null, "status": "upcoming" },
-      { "id": 81, "h": "Belgium",      "a": "Senegal",      "date": "Wed Jul 01", "venue": "Lumen Field",          "city": "Seattle",       "hs": null, "as": null, "status": "upcoming" },
-      { "id": 82, "h": "USA",          "a": "Bosnia & H.",  "date": "Wed Jul 01", "venue": "Levi's Stadium",       "city": "Santa Clara",   "hs": null, "as": null, "status": "upcoming" },
-      { "id": 83, "h": "Spain",        "a": "Austria",      "date": "Thu Jul 02", "venue": "SoFi Stadium",         "city": "Los Angeles",   "hs": null, "as": null, "status": "upcoming" },
-      { "id": 84, "h": "Switzerland",  "a": "Algeria",      "date": "Thu Jul 02", "venue": "BC Place",             "city": "Vancouver",     "hs": null, "as": null, "status": "upcoming" },
-      { "id": 85, "h": "Portugal",     "a": "Croatia",      "date": "Thu Jul 02", "venue": "BMO Field",            "city": "Toronto",       "hs": null, "as": null, "status": "upcoming" },
-      { "id": 86, "h": "Argentina",    "a": "Cape Verde",   "date": "Fri Jul 03", "venue": "Hard Rock Stadium",    "city": "Miami",         "hs": null, "as": null, "status": "upcoming" },
-      { "id": 87, "h": "Colombia",     "a": "Ghana",        "date": "Fri Jul 03", "venue": "Arrowhead Stadium",    "city": "Kansas City",   "hs": null, "as": null, "status": "upcoming" },
-      { "id": 88, "h": "Egypt",        "a": "Australia",    "date": "Fri Jul 03", "venue": "AT&T Stadium",         "city": "Arlington",     "hs": null, "as": null, "status": "upcoming" }
+      {
+        "h": "South Africa",
+        "a": "Canada",
+        "date": "Sun, 28 Jun",
+        "venue": "SoFi Stadium",
+        "city": "Inglewood, California",
+        "status": "live",
+        "hs": null,
+        "as": null
+      },
+      {
+        "h": "Brazil",
+        "a": "Japan",
+        "date": "Mon, 29 Jun",
+        "venue": "NRG Stadium",
+        "city": "Houston, Texas",
+        "status": "upcoming",
+        "hs": null,
+        "as": null
+      },
+      {
+        "h": "Germany",
+        "a": "Paraguay",
+        "date": "Mon, 29 Jun",
+        "venue": "Gillette Stadium",
+        "city": "Foxborough, Massachusetts",
+        "status": "upcoming",
+        "hs": null,
+        "as": null
+      },
+      {
+        "h": "Netherlands",
+        "a": "Morocco",
+        "date": "Tue, 30 Jun",
+        "venue": "Estadio BBVA",
+        "city": "Guadalupe",
+        "status": "upcoming",
+        "hs": null,
+        "as": null
+      },
+      {
+        "h": "Ivory Coast",
+        "a": "Norway",
+        "date": "Tue, 30 Jun",
+        "venue": "AT&T Stadium",
+        "city": "Arlington, Texas",
+        "status": "upcoming",
+        "hs": null,
+        "as": null
+      },
+      {
+        "h": "France",
+        "a": "Sweden",
+        "date": "Tue, 30 Jun",
+        "venue": "MetLife Stadium",
+        "city": "East Rutherford, New Jersey",
+        "status": "upcoming",
+        "hs": null,
+        "as": null
+      },
+      {
+        "h": "Mexico",
+        "a": "Ecuador",
+        "date": "Wed, 01 Jul",
+        "venue": "Estadio Banorte",
+        "city": "Mexico City",
+        "status": "upcoming",
+        "hs": null,
+        "as": null
+      },
+      {
+        "h": "England",
+        "a": "DR Congo",
+        "date": "Wed, 01 Jul",
+        "venue": "Mercedes-Benz Stadium",
+        "city": "Atlanta, Georgia",
+        "status": "upcoming",
+        "hs": null,
+        "as": null
+      },
+      {
+        "h": "Belgium",
+        "a": "Senegal",
+        "date": "Wed, 01 Jul",
+        "venue": "Lumen Field",
+        "city": "Seattle, Washington",
+        "status": "upcoming",
+        "hs": null,
+        "as": null
+      },
+      {
+        "h": "USA",
+        "a": "Bosnia-Herzegovina",
+        "date": "Thu, 02 Jul",
+        "venue": "Levi's Stadium",
+        "city": "Santa Clara, California",
+        "status": "upcoming",
+        "hs": null,
+        "as": null
+      },
+      {
+        "h": "Spain",
+        "a": "Austria",
+        "date": "Thu, 02 Jul",
+        "venue": "SoFi Stadium",
+        "city": "Inglewood, California",
+        "status": "upcoming",
+        "hs": null,
+        "as": null
+      },
+      {
+        "h": "Portugal",
+        "a": "Croatia",
+        "date": "Thu, 02 Jul",
+        "venue": "BMO Field",
+        "city": "Toronto",
+        "status": "upcoming",
+        "hs": null,
+        "as": null
+      },
+      {
+        "h": "Switzerland",
+        "a": "Algeria",
+        "date": "Fri, 03 Jul",
+        "venue": "BC Place",
+        "city": "Vancouver",
+        "status": "upcoming",
+        "hs": null,
+        "as": null
+      },
+      {
+        "h": "Australia",
+        "a": "Egypt",
+        "date": "Fri, 03 Jul",
+        "venue": "AT&T Stadium",
+        "city": "Arlington, Texas",
+        "status": "upcoming",
+        "hs": null,
+        "as": null
+      },
+      {
+        "h": "Argentina",
+        "a": "Cape Verde",
+        "date": "Fri, 03 Jul",
+        "venue": "Hard Rock Stadium",
+        "city": "Miami Gardens, Florida",
+        "status": "upcoming",
+        "hs": null,
+        "as": null
+      },
+      {
+        "h": "Colombia",
+        "a": "Ghana",
+        "date": "Sat, 04 Jul",
+        "venue": "GEHA Field at Arrowhead Stadium",
+        "city": "Kansas City, Missouri",
+        "status": "upcoming",
+        "hs": null,
+        "as": null
+      }
     ],
-    "R16": [],
-    "QF": [],
-    "SF": [],
+    "R16": [
+      {
+        "h": "Round of 32 1 Winner",
+        "a": "Round of 32 3 Winner",
+        "date": "Sat, 04 Jul",
+        "venue": "NRG Stadium",
+        "city": "Houston, Texas",
+        "status": "upcoming",
+        "hs": null,
+        "as": null
+      },
+      {
+        "h": "Round of 32 2 Winner",
+        "a": "Round of 32 5 Winner",
+        "date": "Sat, 04 Jul",
+        "venue": "Lincoln Financial Field",
+        "city": "Philadelphia, Pennsylvania",
+        "status": "upcoming",
+        "hs": null,
+        "as": null
+      },
+      {
+        "h": "Round of 32 4 Winner",
+        "a": "Round of 32 6 Winner",
+        "date": "Sun, 05 Jul",
+        "venue": "MetLife Stadium",
+        "city": "East Rutherford, New Jersey",
+        "status": "upcoming",
+        "hs": null,
+        "as": null
+      },
+      {
+        "h": "Round of 32 7 Winner",
+        "a": "Round of 32 8 Winner",
+        "date": "Mon, 06 Jul",
+        "venue": "Estadio Banorte",
+        "city": "Mexico City",
+        "status": "upcoming",
+        "hs": null,
+        "as": null
+      },
+      {
+        "h": "Round of 32 11 Winner",
+        "a": "Round of 32 12 Winner",
+        "date": "Mon, 06 Jul",
+        "venue": "AT&T Stadium",
+        "city": "Arlington, Texas",
+        "status": "upcoming",
+        "hs": null,
+        "as": null
+      },
+      {
+        "h": "Round of 32 9 Winner",
+        "a": "Round of 32 10 Winner",
+        "date": "Tue, 07 Jul",
+        "venue": "Lumen Field",
+        "city": "Seattle, Washington",
+        "status": "upcoming",
+        "hs": null,
+        "as": null
+      },
+      {
+        "h": "Round of 32 14 Winner",
+        "a": "Round of 32 16 Winner",
+        "date": "Tue, 07 Jul",
+        "venue": "Mercedes-Benz Stadium",
+        "city": "Atlanta, Georgia",
+        "status": "upcoming",
+        "hs": null,
+        "as": null
+      },
+      {
+        "h": "Round of 32 13 Winner",
+        "a": "Round of 32 15 Winner",
+        "date": "Tue, 07 Jul",
+        "venue": "BC Place",
+        "city": "Vancouver",
+        "status": "upcoming",
+        "hs": null,
+        "as": null
+      }
+    ],
+    "QF": [
+      {
+        "h": "Round of 16 1 Winner",
+        "a": "Round of 16 2 Winner",
+        "date": "Thu, 09 Jul",
+        "venue": "Gillette Stadium",
+        "city": "Foxborough, Massachusetts",
+        "status": "upcoming",
+        "hs": null,
+        "as": null
+      },
+      {
+        "h": "Round of 16 5 Winner",
+        "a": "Round of 16 6 Winner",
+        "date": "Fri, 10 Jul",
+        "venue": "SoFi Stadium",
+        "city": "Inglewood, California",
+        "status": "upcoming",
+        "hs": null,
+        "as": null
+      },
+      {
+        "h": "Round of 16 3 Winner",
+        "a": "Round of 16 4 Winner",
+        "date": "Sat, 11 Jul",
+        "venue": "Hard Rock Stadium",
+        "city": "Miami Gardens, Florida",
+        "status": "upcoming",
+        "hs": null,
+        "as": null
+      },
+      {
+        "h": "Round of 16 7 Winner",
+        "a": "Round of 16 8 Winner",
+        "date": "Sun, 12 Jul",
+        "venue": "GEHA Field at Arrowhead Stadium",
+        "city": "Kansas City, Missouri",
+        "status": "upcoming",
+        "hs": null,
+        "as": null
+      }
+    ],
+    "SF": [
+      {
+        "h": "Quarterfinal 1 Winner",
+        "a": "Quarterfinal 2 Winner",
+        "date": "Tue, 14 Jul",
+        "venue": "AT&T Stadium",
+        "city": "Arlington, Texas",
+        "status": "upcoming",
+        "hs": null,
+        "as": null
+      },
+      {
+        "h": "Quarterfinal 3 Winner",
+        "a": "Quarterfinal 4 Winner",
+        "date": "Wed, 15 Jul",
+        "venue": "Mercedes-Benz Stadium",
+        "city": "Atlanta, Georgia",
+        "status": "upcoming",
+        "hs": null,
+        "as": null
+      }
+    ],
     "TP": [],
-    "F": []
+    "F": [
+      {
+        "h": "Semifinal 1 Winner",
+        "a": "Semifinal 2 Winner",
+        "date": "Sun, 19 Jul",
+        "venue": "MetLife Stadium",
+        "city": "East Rutherford, New Jersey",
+        "status": "upcoming",
+        "hs": null,
+        "as": null
+      }
+    ]
   }
 }
