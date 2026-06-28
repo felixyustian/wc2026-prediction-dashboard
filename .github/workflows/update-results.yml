@@ -1,12 +1,12 @@
 name: Update World Cup results
 
-# Fetches finished matches from ESPN (no API key needed) and commits results.json.
-# The commit to the production branch triggers Vercel to redeploy.
+# Keyless ESPN updaters for group results (results.json) and the knockout
+# bracket (knockout.json). Commits to the production branch → Vercel redeploys.
 
 on:
   schedule:
-    - cron: "0 4,8,12,16,20 * * *"   # five times daily (UTC) during the tournament
-  workflow_dispatch: {}              # manual "Run workflow" button
+    - cron: "0 */3 * * *"     # every 3 hours during the tournament
+  workflow_dispatch: {}
 
 permissions:
   contents: write
@@ -24,13 +24,16 @@ jobs:
         with:
           node-version: "22"
 
-      - name: Fetch latest results
+      - name: Update group results
         run: node scripts/update-results.mjs
+
+      - name: Update knockout bracket
+        run: node scripts/update-knockout.mjs
 
       - name: Commit if changed
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "chore: update results.json"
-          file_pattern: results.json
+          commit_message: "chore: update results + knockout"
+          file_pattern: "results.json knockout.json"
           commit_user_name: wc-results-bot
           commit_user_email: actions@users.noreply.github.com
