@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-27",
+  "updated": "2026-06-28",
   "source": "ESPN (fifa.world)",
   "results": [
     {
@@ -463,6 +463,48 @@
       "a": "Belgium",
       "hs": 1,
       "as": 5
+    },
+    {
+      "g": "L",
+      "h": "Croatia",
+      "a": "Ghana",
+      "hs": 2,
+      "as": 1
+    },
+    {
+      "g": "L",
+      "h": "Panama",
+      "a": "England",
+      "hs": 0,
+      "as": 2
+    },
+    {
+      "g": "K",
+      "h": "Colombia",
+      "a": "Portugal",
+      "hs": 0,
+      "as": 0
+    },
+    {
+      "g": "K",
+      "h": "DR Congo",
+      "a": "Uzbekistan",
+      "hs": 3,
+      "as": 1
+    },
+    {
+      "g": "J",
+      "h": "Algeria",
+      "a": "Austria",
+      "hs": 3,
+      "as": 3
+    },
+    {
+      "g": "J",
+      "h": "Jordan",
+      "a": "Argentina",
+      "hs": 1,
+      "as": 3
     }
   ]
 }
