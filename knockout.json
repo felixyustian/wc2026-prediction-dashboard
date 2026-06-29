@@ -19,9 +19,9 @@
         "date": "Mon, 29 Jun",
         "venue": "NRG Stadium",
         "city": "Houston, Texas",
-        "status": "live",
-        "hs": null,
-        "as": null
+        "status": "final",
+        "hs": 2,
+        "as": 1
       },
       {
         "h": "Germany",
@@ -186,7 +186,7 @@
         "as": null
       },
       {
-        "h": "Round of 32 4 Winner",
+        "h": "Brazil",
         "a": "Round of 32 6 Winner",
         "date": "Sun, 05 Jul",
         "venue": "MetLife Stadium",
