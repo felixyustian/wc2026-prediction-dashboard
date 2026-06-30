@@ -44,9 +44,14 @@
         "date": "Tue, 30 Jun",
         "venue": "Estadio BBVA",
         "city": "Guadalupe",
-        "status": "upcoming",
-        "hs": null,
-        "as": null
+        "status": "final",
+        "hs": 1,
+        "as": 1,
+        "pens": [
+          2,
+          3
+        ],
+        "adv": "a"
       },
       {
         "h": "Ivory Coast",
@@ -172,7 +177,7 @@
     "R16": [
       {
         "h": "Canada",
-        "a": "Round of 32 3 Winner",
+        "a": "Morocco",
         "date": "Sat, 04 Jul",
         "venue": "NRG Stadium",
         "city": "Houston, Texas",
