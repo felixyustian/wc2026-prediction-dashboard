@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-29",
+  "updated": "2026-06-30",
   "source": "ESPN (fifa.world) — knockout",
   "rounds": {
     "R32": [
@@ -29,9 +29,14 @@
         "date": "Mon, 29 Jun",
         "venue": "Gillette Stadium",
         "city": "Foxborough, Massachusetts",
-        "status": "live",
-        "hs": null,
-        "as": null
+        "status": "final",
+        "hs": 1,
+        "as": 1,
+        "pens": [
+          3,
+          4
+        ],
+        "adv": "a"
       },
       {
         "h": "Netherlands",
@@ -176,7 +181,7 @@
         "as": null
       },
       {
-        "h": "Round of 32 2 Winner",
+        "h": "Paraguay",
         "a": "Round of 32 5 Winner",
         "date": "Sat, 04 Jul",
         "venue": "Lincoln Financial Field",
