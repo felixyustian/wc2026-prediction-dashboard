@@ -59,9 +59,9 @@
         "date": "Tue, 30 Jun",
         "venue": "AT&T Stadium",
         "city": "Arlington, Texas",
-        "status": "upcoming",
-        "hs": null,
-        "as": null
+        "status": "final",
+        "hs": 1,
+        "as": 2
       },
       {
         "h": "France",
@@ -197,7 +197,7 @@
       },
       {
         "h": "Brazil",
-        "a": "Round of 32 6 Winner",
+        "a": "Norway",
         "date": "Sun, 05 Jul",
         "venue": "MetLife Stadium",
         "city": "East Rutherford, New Jersey",
