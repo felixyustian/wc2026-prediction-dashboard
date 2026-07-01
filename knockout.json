@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-30",
+  "updated": "2026-07-01",
   "source": "ESPN (fifa.world) — knockout",
   "rounds": {
     "R32": [
@@ -69,9 +69,9 @@
         "date": "Tue, 30 Jun",
         "venue": "MetLife Stadium",
         "city": "East Rutherford, New Jersey",
-        "status": "live",
-        "hs": null,
-        "as": null
+        "status": "final",
+        "hs": 3,
+        "as": 0
       },
       {
         "h": "Mexico",
@@ -79,7 +79,7 @@
         "date": "Wed, 01 Jul",
         "venue": "Estadio Banorte",
         "city": "Mexico City",
-        "status": "upcoming",
+        "status": "live",
         "hs": null,
         "as": null
       },
@@ -187,7 +187,7 @@
       },
       {
         "h": "Paraguay",
-        "a": "Round of 32 5 Winner",
+        "a": "France",
         "date": "Sat, 04 Jul",
         "venue": "Lincoln Financial Field",
         "city": "Philadelphia, Pennsylvania",
