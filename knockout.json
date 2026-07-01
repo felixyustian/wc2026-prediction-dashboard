@@ -89,9 +89,9 @@
         "date": "Wed, 01 Jul",
         "venue": "Mercedes-Benz Stadium",
         "city": "Atlanta, Georgia",
-        "status": "live",
-        "hs": null,
-        "as": null
+        "status": "final",
+        "hs": 2,
+        "as": 1
       },
       {
         "h": "Belgium",
@@ -207,7 +207,7 @@
       },
       {
         "h": "Mexico",
-        "a": "Round of 32 8 Winner",
+        "a": "England",
         "date": "Mon, 06 Jul",
         "venue": "Estadio Banorte",
         "city": "Mexico City",
