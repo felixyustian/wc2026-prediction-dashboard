@@ -79,9 +79,9 @@
         "date": "Wed, 01 Jul",
         "venue": "Estadio Banorte",
         "city": "Mexico City",
-        "status": "live",
-        "hs": null,
-        "as": null
+        "status": "final",
+        "hs": 2,
+        "as": 0
       },
       {
         "h": "England",
@@ -206,7 +206,7 @@
         "as": null
       },
       {
-        "h": "Round of 32 7 Winner",
+        "h": "Mexico",
         "a": "Round of 32 8 Winner",
         "date": "Mon, 06 Jul",
         "venue": "Estadio Banorte",
