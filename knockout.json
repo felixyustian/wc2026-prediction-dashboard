@@ -120,9 +120,9 @@
         "date": "Thu, 02 Jul",
         "venue": "SoFi Stadium",
         "city": "Inglewood, California",
-        "status": "upcoming",
-        "hs": null,
-        "as": null
+        "status": "final",
+        "hs": 3,
+        "as": 0
       },
       {
         "h": "Portugal",
@@ -218,7 +218,7 @@
       },
       {
         "h": "Round of 32 11 Winner",
-        "a": "Round of 32 12 Winner",
+        "a": "Spain",
         "date": "Mon, 06 Jul",
         "venue": "AT&T Stadium",
         "city": "Arlington, Texas",
