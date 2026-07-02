@@ -1,5 +1,5 @@
 {
-  "updated": "2026-07-01",
+  "updated": "2026-07-02",
   "source": "ESPN (fifa.world) — knockout",
   "rounds": {
     "R32": [
@@ -99,9 +99,10 @@
         "date": "Wed, 01 Jul",
         "venue": "Lumen Field",
         "city": "Seattle, Washington",
-        "status": "live",
-        "hs": null,
-        "as": null
+        "status": "final",
+        "hs": 3,
+        "as": 2,
+        "decided": "AET"
       },
       {
         "h": "USA",
@@ -109,9 +110,9 @@
         "date": "Thu, 02 Jul",
         "venue": "Levi's Stadium",
         "city": "Santa Clara, California",
-        "status": "upcoming",
-        "hs": null,
-        "as": null
+        "status": "final",
+        "hs": 2,
+        "as": 0
       },
       {
         "h": "Spain",
@@ -226,8 +227,8 @@
         "as": null
       },
       {
-        "h": "Round of 32 9 Winner",
-        "a": "Round of 32 10 Winner",
+        "h": "USA",
+        "a": "Belgium",
         "date": "Tue, 07 Jul",
         "venue": "Lumen Field",
         "city": "Seattle, Washington",
