@@ -1,5 +1,5 @@
 {
-  "updated": "2026-07-02",
+  "updated": "2026-07-03",
   "source": "ESPN (fifa.world) — knockout",
   "rounds": {
     "R32": [
@@ -130,9 +130,9 @@
         "date": "Thu, 02 Jul",
         "venue": "BMO Field",
         "city": "Toronto",
-        "status": "upcoming",
-        "hs": null,
-        "as": null
+        "status": "final",
+        "hs": 2,
+        "as": 1
       },
       {
         "h": "Switzerland",
@@ -217,7 +217,7 @@
         "as": null
       },
       {
-        "h": "Round of 32 11 Winner",
+        "h": "Portugal",
         "a": "Spain",
         "date": "Mon, 06 Jul",
         "venue": "AT&T Stadium",
