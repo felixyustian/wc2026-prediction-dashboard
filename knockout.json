@@ -140,9 +140,9 @@
         "date": "Fri, 03 Jul",
         "venue": "BC Place",
         "city": "Vancouver",
-        "status": "upcoming",
-        "hs": null,
-        "as": null
+        "status": "final",
+        "hs": 2,
+        "as": 0
       },
       {
         "h": "Australia",
@@ -247,7 +247,7 @@
         "as": null
       },
       {
-        "h": "Round of 32 13 Winner",
+        "h": "Switzerland",
         "a": "Round of 32 15 Winner",
         "date": "Tue, 07 Jul",
         "venue": "BC Place",
