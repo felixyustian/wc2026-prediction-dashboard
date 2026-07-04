@@ -176,9 +176,9 @@
         "date": "Sat, 04 Jul",
         "venue": "GEHA Field at Arrowhead Stadium",
         "city": "Kansas City, Missouri",
-        "status": "live",
-        "hs": null,
-        "as": null
+        "status": "final",
+        "hs": 1,
+        "as": 0
       }
     ],
     "R16": [
@@ -254,7 +254,7 @@
       },
       {
         "h": "Switzerland",
-        "a": "Round of 32 15 Winner",
+        "a": "Colombia",
         "date": "Tue, 07 Jul",
         "venue": "BC Place",
         "city": "Vancouver",
