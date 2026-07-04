@@ -188,9 +188,9 @@
         "date": "Sat, 04 Jul",
         "venue": "NRG Stadium",
         "city": "Houston, Texas",
-        "status": "live",
-        "hs": null,
-        "as": null
+        "status": "final",
+        "hs": 0,
+        "as": 3
       },
       {
         "h": "Paraguay",
@@ -266,7 +266,7 @@
     "QF": [
       {
         "h": "Round of 16 1 Winner",
-        "a": "Round of 16 2 Winner",
+        "a": "Morocco",
         "date": "Thu, 09 Jul",
         "venue": "Gillette Stadium",
         "city": "Foxborough, Massachusetts",
