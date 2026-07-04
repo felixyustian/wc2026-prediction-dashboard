@@ -1,5 +1,5 @@
 {
-  "updated": "2026-07-03",
+  "updated": "2026-07-04",
   "source": "ESPN (fifa.world) — knockout",
   "rounds": {
     "R32": [
@@ -150,9 +150,14 @@
         "date": "Fri, 03 Jul",
         "venue": "AT&T Stadium",
         "city": "Arlington, Texas",
-        "status": "live",
-        "hs": null,
-        "as": null
+        "status": "final",
+        "hs": 1,
+        "as": 1,
+        "pens": [
+          2,
+          4
+        ],
+        "adv": "a"
       },
       {
         "h": "Argentina",
@@ -160,9 +165,10 @@
         "date": "Fri, 03 Jul",
         "venue": "Hard Rock Stadium",
         "city": "Miami Gardens, Florida",
-        "status": "upcoming",
-        "hs": null,
-        "as": null
+        "status": "final",
+        "hs": 3,
+        "as": 2,
+        "decided": "AET"
       },
       {
         "h": "Colombia",
@@ -170,7 +176,7 @@
         "date": "Sat, 04 Jul",
         "venue": "GEHA Field at Arrowhead Stadium",
         "city": "Kansas City, Missouri",
-        "status": "upcoming",
+        "status": "live",
         "hs": null,
         "as": null
       }
@@ -237,8 +243,8 @@
         "as": null
       },
       {
-        "h": "Round of 32 14 Winner",
-        "a": "Round of 32 16 Winner",
+        "h": "Argentina",
+        "a": "Egypt",
         "date": "Tue, 07 Jul",
         "venue": "Mercedes-Benz Stadium",
         "city": "Atlanta, Georgia",
