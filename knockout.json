@@ -1,5 +1,5 @@
 {
-  "updated": "2026-07-04",
+  "updated": "2026-07-05",
   "source": "ESPN (fifa.world) — knockout",
   "rounds": {
     "R32": [
@@ -198,9 +198,9 @@
         "date": "Sat, 04 Jul",
         "venue": "Lincoln Financial Field",
         "city": "Philadelphia, Pennsylvania",
-        "status": "upcoming",
-        "hs": null,
-        "as": null
+        "status": "final",
+        "hs": 0,
+        "as": 1
       },
       {
         "h": "Brazil",
@@ -265,7 +265,7 @@
     ],
     "QF": [
       {
-        "h": "Round of 16 1 Winner",
+        "h": "France",
         "a": "Morocco",
         "date": "Thu, 09 Jul",
         "venue": "Gillette Stadium",
