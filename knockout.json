@@ -218,9 +218,9 @@
         "date": "Mon, 06 Jul",
         "venue": "Estadio Banorte",
         "city": "Mexico City",
-        "status": "live",
-        "hs": null,
-        "as": null
+        "status": "final",
+        "hs": 2,
+        "as": 3
       },
       {
         "h": "Portugal",
@@ -286,7 +286,7 @@
       },
       {
         "h": "Norway",
-        "a": "Round of 16 4 Winner",
+        "a": "England",
         "date": "Sat, 11 Jul",
         "venue": "Hard Rock Stadium",
         "city": "Miami Gardens, Florida",
