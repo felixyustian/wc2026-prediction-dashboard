@@ -228,9 +228,9 @@
         "date": "Mon, 06 Jul",
         "venue": "AT&T Stadium",
         "city": "Arlington, Texas",
-        "status": "upcoming",
-        "hs": null,
-        "as": null
+        "status": "final",
+        "hs": 0,
+        "as": 1
       },
       {
         "h": "USA",
@@ -275,7 +275,7 @@
         "as": null
       },
       {
-        "h": "Round of 16 5 Winner",
+        "h": "Spain",
         "a": "Round of 16 6 Winner",
         "date": "Fri, 10 Jul",
         "venue": "SoFi Stadium",
