@@ -1,5 +1,5 @@
 {
-  "updated": "2026-07-06",
+  "updated": "2026-07-07",
   "source": "ESPN (fifa.world) — knockout",
   "rounds": {
     "R32": [
@@ -238,7 +238,7 @@
         "date": "Tue, 07 Jul",
         "venue": "Lumen Field",
         "city": "Seattle, Washington",
-        "status": "upcoming",
+        "status": "live",
         "hs": null,
         "as": null
       },
