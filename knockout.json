@@ -1,5 +1,5 @@
 {
-  "updated": "2026-07-07",
+  "updated": "2026-07-08",
   "source": "ESPN (fifa.world) — knockout",
   "rounds": {
     "R32": [
@@ -258,9 +258,14 @@
         "date": "Tue, 07 Jul",
         "venue": "BC Place",
         "city": "Vancouver",
-        "status": "live",
-        "hs": null,
-        "as": null
+        "status": "final",
+        "hs": 0,
+        "as": 0,
+        "pens": [
+          4,
+          3
+        ],
+        "adv": "h"
       }
     ],
     "QF": [
@@ -296,7 +301,7 @@
       },
       {
         "h": "Argentina",
-        "a": "Round of 16 8 Winner",
+        "a": "Switzerland",
         "date": "Sun, 12 Jul",
         "venue": "GEHA Field at Arrowhead Stadium",
         "city": "Kansas City, Missouri",
