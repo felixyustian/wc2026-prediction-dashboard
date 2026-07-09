@@ -275,9 +275,9 @@
         "date": "Thu, 09 Jul",
         "venue": "Gillette Stadium",
         "city": "Foxborough, Massachusetts",
-        "status": "upcoming",
-        "hs": null,
-        "as": null
+        "status": "final",
+        "hs": 2,
+        "as": 0
       },
       {
         "h": "Spain",
@@ -312,7 +312,7 @@
     ],
     "SF": [
       {
-        "h": "Quarterfinal 1 Winner",
+        "h": "France",
         "a": "Quarterfinal 2 Winner",
         "date": "Tue, 14 Jul",
         "venue": "AT&T Stadium",
