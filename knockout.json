@@ -1,5 +1,5 @@
 {
-  "updated": "2026-07-10",
+  "updated": "2026-07-11",
   "source": "ESPN (fifa.world) — knockout",
   "rounds": {
     "R32": [
@@ -285,9 +285,9 @@
         "date": "Fri, 10 Jul",
         "venue": "SoFi Stadium",
         "city": "Inglewood, California",
-        "status": "live",
-        "hs": null,
-        "as": null
+        "status": "final",
+        "hs": 2,
+        "as": 1
       },
       {
         "h": "Norway",
@@ -313,7 +313,7 @@
     "SF": [
       {
         "h": "France",
-        "a": "Quarterfinal 2 Winner",
+        "a": "Spain",
         "date": "Tue, 14 Jul",
         "venue": "AT&T Stadium",
         "city": "Arlington, Texas",
