@@ -306,9 +306,10 @@
         "date": "Sun, 12 Jul",
         "venue": "GEHA Field at Arrowhead Stadium",
         "city": "Kansas City, Missouri",
-        "status": "live",
-        "hs": null,
-        "as": null
+        "status": "final",
+        "hs": 3,
+        "as": 1,
+        "decided": "AET"
       }
     ],
     "SF": [
@@ -324,7 +325,7 @@
       },
       {
         "h": "England",
-        "a": "Quarterfinal 4 Winner",
+        "a": "Argentina",
         "date": "Wed, 15 Jul",
         "venue": "Mercedes-Benz Stadium",
         "city": "Atlanta, Georgia",
