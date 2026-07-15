@@ -329,16 +329,16 @@
         "date": "Wed, 15 Jul",
         "venue": "Mercedes-Benz Stadium",
         "city": "Atlanta, Georgia",
-        "status": "upcoming",
-        "hs": null,
-        "as": null
+        "status": "final",
+        "hs": 1,
+        "as": 2
       }
     ],
     "TP": [],
     "F": [
       {
         "h": "Spain",
-        "a": "Semifinal 2 Winner",
+        "a": "Argentina",
         "date": "Sun, 19 Jul",
         "venue": "MetLife Stadium",
         "city": "East Rutherford, New Jersey",
