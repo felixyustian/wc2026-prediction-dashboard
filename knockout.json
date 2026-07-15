@@ -1,5 +1,5 @@
 {
-  "updated": "2026-07-14",
+  "updated": "2026-07-15",
   "source": "ESPN (fifa.world) — knockout",
   "rounds": {
     "R32": [
@@ -319,9 +319,9 @@
         "date": "Tue, 14 Jul",
         "venue": "AT&T Stadium",
         "city": "Arlington, Texas",
-        "status": "live",
-        "hs": null,
-        "as": null
+        "status": "final",
+        "hs": 0,
+        "as": 2
       },
       {
         "h": "England",
@@ -337,7 +337,7 @@
     "TP": [],
     "F": [
       {
-        "h": "Semifinal 1 Winner",
+        "h": "Spain",
         "a": "Semifinal 2 Winner",
         "date": "Sun, 19 Jul",
         "venue": "MetLife Stadium",
