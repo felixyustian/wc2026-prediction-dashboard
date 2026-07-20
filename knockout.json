@@ -1,5 +1,5 @@
 {
-  "updated": "2026-07-19",
+  "updated": "2026-07-20",
   "source": "ESPN (fifa.world) — knockout",
   "rounds": {
     "R32": [
@@ -342,9 +342,10 @@
         "date": "Sun, 19 Jul",
         "venue": "MetLife Stadium",
         "city": "East Rutherford, New Jersey",
-        "status": "upcoming",
-        "hs": null,
-        "as": null
+        "status": "final",
+        "hs": 1,
+        "as": 0,
+        "decided": "AET"
       }
     ]
   }
